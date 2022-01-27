@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Routing;
+﻿using Bb.WebClient.UIComponents;
+using Bb.WebClient.UIComponents.Glyphs;
+using Microsoft.AspNetCore.Components.Routing;
 using System.Globalization;
 using System.Linq;
 
@@ -37,7 +39,7 @@ namespace Bb.WebHost.UIComponents
             if (c is UIComponentMenu u)
             {
                 if (u.KeyboardArrowDown)
-                    menu.KeyboardArrowDown = Glyphs.GlyphFilled.KeyboardArrowDown.Value;
+                    menu.KeyboardArrowDown = GlyphFilled.KeyboardArrowDown.Value;
 
                 if (u.Action != null)
                     menu.Action = u.Action;

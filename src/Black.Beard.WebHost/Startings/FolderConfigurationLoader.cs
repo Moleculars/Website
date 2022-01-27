@@ -1,4 +1,4 @@
-﻿using Bb.WebHost.Startings.InitialConfiguration;
+﻿using Bb.WebClient.Startings;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Diagnostics;
@@ -77,7 +77,7 @@ namespace Bb.WebHost.Startings
         }
 
 
-        public _Loader Configuration { get; set; }
+        public Loader Configuration { get; set; }
 
         public bool ConfigLoaded { get; private set; }
 

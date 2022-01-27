@@ -1,4 +1,4 @@
-﻿using Bb.WebHost.UIComponents;
+﻿using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 
 namespace MolecularSite.Shared

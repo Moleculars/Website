@@ -1,4 +1,5 @@
-﻿using Bb.WebHost.Startings;
+﻿using Bb.WebClient.Startings;
+using Bb.WebHost.Startings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;

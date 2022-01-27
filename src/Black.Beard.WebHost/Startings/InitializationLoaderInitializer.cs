@@ -1,5 +1,4 @@
-﻿using Bb.WebHost.Startings.InitialConfiguration;
-using Bb.ComponentModel;
+﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +11,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Bb.WebHost.ApplicationBuilders;
+using Bb.WebClient.Startings;
+using Bb.WebClient.ApplicationBuilders;
 
 namespace Bb.WebHost.Startings
 {
@@ -95,18 +96,14 @@ namespace Bb.WebHost.Startings
 
             }
 
-            List<IApplicationBuilderInitializer> _builderlist = new List<IApplicationBuilderInitializer>();
-
             // Inject individual types in the ioc
             foreach (var item in self.Builders)
-                _builderlist.Add((IApplicationBuilderInitializer)Activator.CreateInstance(item));
+                self.InstancesBuilders.Add((IApplicationBuilderInitializer)Activator.CreateInstance(item));
 
             var configuration = self.InitialConfigurationRoot;
 
-            foreach (var item in _builderlist)
+            foreach (var item in self.InstancesBuilders)
                 item.Initialize(services, configuration);
-
-            self.InstancesBuilders = _builderlist;
 
             return self;
 
@@ -160,14 +157,13 @@ namespace Bb.WebHost.Startings
 
                 foreach (var item in self.Loaders)
                 {
-
                     var type = Type.GetType(item.Type);
                     if (type == null)
                         throw new NotImplementedException(item.Type);
 
-                    var srv = Activator.CreateInstance(type) as IConfigurationLoader;
-                    if (srv == null)
+                    if (Activator.CreateInstance(type) is not IConfigurationLoader srv)
                         throw new InvalidCastException(item.Type);
+
                     srv.Configuration = item;
                     srv.Load(loader);
 
@@ -224,7 +220,7 @@ namespace Bb.WebHost.Startings
 
             var _allBuilders = ExposedTypes.Instance.GetTypes(ConstantsCore.Initialization).ToList();
             var toRemove = new List<KeyValuePair<Type, HashSet<ExposeClassAttribute>>>();
-            HashSet<Type> _types = new HashSet<Type>();
+            var _types = new HashSet<Type>();
 
             foreach (var service in _allBuilders.Where(c => typeof(IApplicationBuilderInitializer).IsAssignableFrom(c.Key)))
                 if (_types.Add(service.Key))
@@ -265,11 +261,11 @@ namespace Bb.WebHost.Startings
         {
 
 
-            _InitialConfiguration _configuration = new _InitialConfiguration();
-            self.InitialConfigurationRoot.Bind(typeof(_InitialConfiguration).Name, _configuration);
+            var _configuration = new InitialConfiguration();
+            self.InitialConfigurationRoot.Bind(typeof(InitialConfiguration).Name, _configuration);
 
 
-            _configuration.Loaders.Add(new _Loader()
+            _configuration.Loaders.Add(new Loader()
             {
                 Type = typeof(FolderConfigurationLoader).AssemblyQualifiedName,
             });
@@ -278,7 +274,7 @@ namespace Bb.WebHost.Startings
 
             // Add the first configuration that not exposed by attribute
             self.ExposedTypes.Add(
-                new ExposedType(typeof(_InitialConfiguration), ConstantsCore.Configuration, srv => self.InitialConfiguration)
+                new ExposedType(typeof(InitialConfiguration), ConstantsCore.Configuration, srv => self.InitialConfiguration)
                 );
 
             return self;

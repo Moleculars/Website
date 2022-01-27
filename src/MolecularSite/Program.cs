@@ -18,9 +18,10 @@ var loader = builder
     .LoadConfiguration(args)
     ;
 
-loader.InitialConfiguration.UseSwagger = false;
 
-if (loader.InitialConfiguration.UseSwagger)
+if (loader != null 
+    && loader.InitialConfiguration != null 
+    && loader.InitialConfiguration.UseSwagger)
 {
 
     // Swagger

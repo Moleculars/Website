@@ -21,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Black.Beard.WebHost\Black.Beard.WebHost.csproj" />
+    <Folder Include="Pages\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\" />
+    <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
   </ItemGroup>
 
 </Project>

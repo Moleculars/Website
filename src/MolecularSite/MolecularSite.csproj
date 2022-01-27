@@ -8,11 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.19" />
-    <PackageReference Include="MudBlazor" Version="6.0.2" />
+    <PackageReference Include="MudBlazor" Version="6.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Black.Beard.MolecularSite.Configurations\Black.Beard.MolecularSite.Configurations.csproj" />
+    <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
     <ProjectReference Include="..\Black.Beard.WebHost\Black.Beard.WebHost.csproj" />
   </ItemGroup>
 

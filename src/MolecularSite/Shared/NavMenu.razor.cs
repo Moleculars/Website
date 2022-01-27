@@ -1,4 +1,4 @@
-﻿using Bb.WebHost.UIComponents;
+﻿using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
 
@@ -18,6 +18,9 @@ namespace MolecularSite.Shared
 
         protected override async Task OnInitializedAsync()
         {
+
+            if (translateService == null) 
+                translateService = new TranslateService();
 
             Menus = new List<DynamicServerMenu>();
             var menuBuilder = new MenuConverter(CultureInfo.CurrentCulture, translateService);

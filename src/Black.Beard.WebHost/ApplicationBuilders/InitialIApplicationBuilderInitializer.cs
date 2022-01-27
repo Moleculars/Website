@@ -1,7 +1,8 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
 using Bb.Configurations;
-using Bb.WebHost.UIComponents;
+using Bb.WebClient.ApplicationBuilders;
+using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

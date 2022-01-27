@@ -1,4 +1,5 @@
 ﻿using Bb.ComponentModel;
+using Bb.WebClient.Startings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using System;
@@ -56,7 +57,7 @@ namespace Bb.WebHost.Startings
             var max = items.Count;
             int count = 0;
 
-            List<TypeToInject> toRemove = new List<TypeToInject>();
+            var toRemove = new List<TypeToInject>();
 
             while (items.Count > 0 && count < max)
             {
@@ -92,7 +93,7 @@ namespace Bb.WebHost.Startings
         /// <param name="app">The Microsoft.AspNetCore.Builder.IApplicationBuilder instance.</param>
         /// <param name="args">The arguments to pass to the middleware type instance's constructor.</param>
         /// <returns>The Microsoft.AspNetCore.Builder.IApplicationBuilder instance.</returns>
-        public static WebApplication AppendMiddleware<TMiddleware>(this WebApplication app, params object?[] args)
+        public static WebApplication AppendMiddleware<TMiddleware>(this WebApplication app, params object[] args)
         {
             app.UseMiddleware<TMiddleware>(args);
             return app;

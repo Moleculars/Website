@@ -1,4 +1,5 @@
-﻿using Bb.WebHost.Startings;
+﻿using Bb.WebClient.Startings;
+using Bb.WebHost.Startings;
 using Microsoft.Extensions.Configuration;
 using System;
 
@@ -56,10 +57,10 @@ namespace Bb.Configurations
         private static string CleanName(string txt)
         {
 
-            if (txt.Contains("`"))
+            if (txt.Contains('`'))
             {
                 var index = txt.IndexOf("`");
-                return txt.Substring(0, index);
+                return txt[..index];
             }
 
             return txt;

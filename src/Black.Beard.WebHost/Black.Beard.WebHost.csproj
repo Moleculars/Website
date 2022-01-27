@@ -22,10 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.18" />
+    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.19" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.19" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NJsonSchema" Version="10.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
   </ItemGroup>
 
 </Project>

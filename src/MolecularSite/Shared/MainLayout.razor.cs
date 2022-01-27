@@ -1,4 +1,4 @@
-﻿using Bb.WebHost.UIComponents;
+﻿using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
@@ -16,18 +16,22 @@ namespace MolecularSite.Shared
         }
 
         [Inject]
-        private UIService? uIService { get; set; }
+        private UIService? UIService { get; set; }
 
         [Inject]
         private TranslateService? translateService { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+
+            if (translateService ==null)
+                translateService = new TranslateService();
+
             menus = new List<DynamicServerMenu>();
             var menuBuilder = new MenuConverter(CultureInfo.CurrentCulture, translateService);
-            if (uIService != null)
+            if (UIService != null)
             {
-                var m = await uIService.GetUI(UIService.TopMenu);
+                var m = await UIService.GetUI(UIService.TopMenu);
                 if (m != null)
                     foreach (var m1 in m)
                         menus.Add((DynamicServerMenu)menuBuilder.Convert(m1));

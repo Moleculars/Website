@@ -9,7 +9,7 @@ namespace MolecularSite
 
         public App()
         {
-
+            _currentAssembly = typeof(App).Assembly;
         }
 
 
@@ -17,10 +17,18 @@ namespace MolecularSite
         {
             get
             {
-                return BlazorAssemblyResolver.Instance.GetAssemblies();
+
+                var result = BlazorAssemblyResolver.Instance.GetAssemblies()
+                    .Where(c => c != _currentAssembly)
+                    .ToArray();
+
+                return result;
+
             }
         }
 
+
+        private readonly Assembly _currentAssembly;
 
 
     }
