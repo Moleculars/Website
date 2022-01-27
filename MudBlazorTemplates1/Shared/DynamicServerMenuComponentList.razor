@@ -1,0 +1,11 @@
+﻿@using Bb.WebHost.UIComponents
+ 
+    
+    @if(Menus != null)
+        @foreach(DynamicServerMenu menu in Menus)
+    {
+       
+       <DynamicServerMenuComponent Menu="@menu" />
+    
+    }
+
