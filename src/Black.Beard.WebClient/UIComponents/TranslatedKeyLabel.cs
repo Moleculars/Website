@@ -4,6 +4,7 @@ using System.Diagnostics;
 namespace Bb.WebClient.UIComponents
 {
 
+
     [DebuggerDisplay("{DefaultDisplay}")]
     public class TranslatedKeyLabel
     {
@@ -47,7 +48,11 @@ namespace Bb.WebClient.UIComponents
                 return new TranslatedKeyLabel(items[0], items[1], items[2], items[3]);
 
             if (items.Length == 3)
+            {
+                
                 return new TranslatedKeyLabel(items[0], items[1], items[2], string.Empty);
+
+            }
 
             throw new InvalidTranslationKeyFormatException(key);
 
@@ -55,4 +60,14 @@ namespace Bb.WebClient.UIComponents
 
 
     }
+
 }
+
+/*
+ 
+    ,,,d:Default value
+ 
+    a:application, c:context, k:key, d:default value
+
+
+ */

@@ -205,7 +205,7 @@ namespace Bb.WebHost.Startings
                 foreach (var item2 in item1.Value)
                 {
                     self.InjectBuilders.Add(item2.LifeCycle, item2.ExposedType ?? item1.Key, item1.Key);
-                    self.Configurations.Add(item2.ExposedType);
+                    self.Configurations.Add(item2.ExposedType ?? item1.Key);
                 }
 
             self.InjectBuilders.Add(IocScopeEnum.Singleton, typeof(ExposedTypeRepository), self.ExposedTypes);

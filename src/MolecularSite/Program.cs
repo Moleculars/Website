@@ -11,17 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-//builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMudServices();
 
 var loader = builder
     .LoadConfiguration(args)
     ;
 
+var useSwagger = loader != null
+    && loader.InitialConfiguration != null
+    && loader.InitialConfiguration.UseSwagger;
 
-if (loader != null 
-    && loader.InitialConfiguration != null 
-    && loader.InitialConfiguration.UseSwagger)
+if (useSwagger)
 {
 
     // Swagger
@@ -54,7 +54,7 @@ var app = builder.Build()
     .ConfigureUseExceptionHandler(err => err.UseCustomErrors(loader))
 ;
 
-if (loader.InitialConfiguration.UseSwagger)
+if (useSwagger)
 {
     // Swagger 
     app.UseSwagger();

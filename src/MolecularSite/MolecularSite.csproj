@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.19" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.21" />
     <PackageReference Include="MudBlazor" Version="6.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>

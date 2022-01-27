@@ -7,10 +7,11 @@
 		<RootNamespace>Bb</RootNamespace>
 		<OutputType>Library</OutputType>
 		<StartupObject />
+		<Company>Black.Beard</Company>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.19" />
+	  <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.21" />
 	</ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@ using Bb.WebClient.ApplicationBuilders;
 using Bb.WebClient.UIComponents;
 
 
-namespace Bb.WebHost.ApplicationBuilders
+namespace Bb.MolecularSite.Configurations.Menus
 {
 
 
@@ -20,8 +20,8 @@ namespace Bb.WebHost.ApplicationBuilders
 
         public void Initialize(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton(typeof(UIService));
             services.AddSingleton(typeof(ServiceConfigurationMapper));
+            services.AddSingleton(typeof(ServiceConfigurationRepository));
         }
 
 

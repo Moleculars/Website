@@ -1,0 +1,25 @@
+﻿@page "/PropertyGrid"
+@using MudBlazor
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+
+        <MudPaper Width="450px">
+
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+
+                @if (Descriptor != null && Descriptor.Items != null)
+                {
+                    @foreach (PropertyObjectDescriptor property in Descriptor.Items)
+                    {
+                        <MudTextField T="string"
+                                  Label="@property.Display"
+                                  Required="true"
+                                  RequiredError="User name is required!" />
+                    }
+                }
+            </MudForm>
+
+        </MudPaper>
+    </MudItem>
+</MudGrid>

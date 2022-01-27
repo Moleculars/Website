@@ -18,13 +18,19 @@ namespace Bb.WebClient.UIComponents
                 CultureInfo.GetCultureInfo("en-US"),
             };
         }
+               
+
+        public string Translate(TranslatedKeyLabel key)
+        {
+            return Translate(CultureInfo.CurrentUICulture, key);
+        }
+
 
         public string Translate(CultureInfo culture, TranslatedKeyLabel key)
         {
-
             return key.DefaultDisplay;
-
         }
+
 
         public CultureInfo[] AvailableCultures { get { return _availableCultures; } }
 

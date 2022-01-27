@@ -1,4 +1,51 @@
 ﻿@page "/configurations"
+@using MudBlazor
+@using Bb.MolecularSite.PropertyGridComponent
 
-<h3>Configurations</h3>
+
+<MudGrid Spacing="5" Justify="Justify.FlexStart">
+
+    <MudItem>
+
+        <MudPaper Width="450px">
+
+            <MudList Clickable="true">
+
+                <MudListSubheader>@TranslateService.Translate("Context::Title::Configurations")</MudListSubheader>
+
+                @if (Configurations != null)
+                    @foreach (var assembly in Configurations)
+                    {
+                        <MudListItem Icon="@Icons.Material.Filled.Inbox"
+                             Text="@TranslateService.Translate(assembly.Label)"
+                             InitiallyExpanded="false">
+
+                            <NestedList>
+                                @foreach (var type in assembly.Subs)
+                                {
+                                    <MudListItem Icon="@Icons.Material.Filled.StarRate"
+                                     OnClick="@(() => Selected(type))">@TranslateService.Translate(type.Label)</MudListItem>
+                                }
+                            </NestedList>
+
+                        </MudListItem>
+                    }
+
+            </MudList>
+
+        </MudPaper>
+
+    </MudItem>
+
+    <MudItem>
+
+        <MudPaper Height="140px" Width="140px">
+
+            <PropertyGrid SelectedObject="@CurrentItem" />
+
+        </MudPaper>
+
+    </MudItem>
+
+</MudGrid>
 
