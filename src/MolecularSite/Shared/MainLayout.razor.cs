@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using System.Globalization;
 using System.Reflection;
 
-namespace MudBlazorTemplates1.Shared
+namespace MolecularSite.Shared
 {
 
     public partial class MainLayout
@@ -28,12 +28,13 @@ namespace MudBlazorTemplates1.Shared
             if (uIService != null)
             {
                 var m = await uIService.GetUI(UIService.TopMenu);
-                foreach (var m1 in m)
-                    menus.Add((DynamicServerMenu)menuBuilder.Convert(m1));
+                if (m != null)
+                    foreach (var m1 in m)
+                        menus.Add((DynamicServerMenu)menuBuilder.Convert(m1));
             }
         }
 
-        bool _drawerOpen = false;       
+        bool _drawerOpen = false;
         private List<DynamicServerMenu>? menus;
 
 
@@ -117,5 +118,6 @@ namespace MudBlazorTemplates1.Shared
             return route;
         }
     }
+
 
 }

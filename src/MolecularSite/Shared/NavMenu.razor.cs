@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
 
-namespace MudBlazorTemplates1.Shared
+namespace MolecularSite.Shared
 {
 
     public partial class NavMenu
@@ -24,8 +24,9 @@ namespace MudBlazorTemplates1.Shared
             if (uIService != null)
             {
                 var m = await uIService.GetUI(UIService.LeftMenu);
-                foreach (var m1 in m)
-                    Menus.Add((DynamicServerMenu)menuBuilder.Convert(m1));
+                if (m != null)
+                    foreach (var m1 in m)
+                        Menus.Add((DynamicServerMenu)menuBuilder.Convert(m1));
 
             }
 
