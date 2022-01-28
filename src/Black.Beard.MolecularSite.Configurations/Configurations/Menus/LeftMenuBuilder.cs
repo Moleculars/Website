@@ -40,7 +40,7 @@ namespace Bb.MolecularSite.Configurations.Menus
             service.GetMenuOrCreate(UIService.LeftMenu, guidConfigurations, "::Configuration")
                 .SetAction(NavLinkMatch.Prefix, "/configurations")
                 .SetKeyboardArrowDown(false)
-                .SetIcon(GlyphFilled.PanTool)
+                .SetIcon(GlyphOutlined.Settings)
                 ;
 
             return 0;

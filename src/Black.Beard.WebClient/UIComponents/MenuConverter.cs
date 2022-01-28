@@ -9,9 +9,8 @@ namespace Bb.WebClient.UIComponents
     public class MenuConverter : IMenuConverter
     {
 
-        public MenuConverter(CultureInfo culture, TranslateService translateService)
+        public MenuConverter(TranslateService translateService)
         {
-            this._culture = culture;
             this._translateService = translateService;
         }
 
@@ -24,7 +23,7 @@ namespace Bb.WebClient.UIComponents
                 Uui = c.Uuid,
                 
                 Display = c.Display != null 
-                    ? this._translateService.Translate(this._culture, c.Display) 
+                    ? this._translateService.Translate(c.Display) 
                     : string.Empty,
 
                 Type = c.Type,
@@ -62,7 +61,6 @@ namespace Bb.WebClient.UIComponents
 
         }
 
-        private CultureInfo _culture;
         private readonly TranslateService _translateService;
 
     }

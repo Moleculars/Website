@@ -3,11 +3,11 @@
 @using Bb.MolecularSite.PropertyGridComponent
 
 
-<MudGrid Spacing="5" Justify="Justify.FlexStart">
+<MudGrid Spacing="2">
 
-    <MudItem>
+    <MudItem xs=12 sm=5>
 
-        <MudPaper Width="450px">
+        <MudPaper>
 
             <MudList Clickable="true">
 
@@ -23,7 +23,7 @@
                             <NestedList>
                                 @foreach (var type in assembly.Subs)
                                 {
-                                    <MudListItem Icon="@Icons.Material.Filled.StarRate"
+                                    <MudListItem Icon="@Icons.Material.Outlined.Settings"
                                      OnClick="@(() => Selected(type))">@TranslateService.Translate(type.Label)</MudListItem>
                                 }
                             </NestedList>
@@ -37,9 +37,9 @@
 
     </MudItem>
 
-    <MudItem>
+    <MudItem xs=12 sm=7>
 
-        <MudPaper Height="140px" Width="140px">
+        <MudPaper>
 
             <PropertyGrid SelectedObject="@CurrentItem" />
 

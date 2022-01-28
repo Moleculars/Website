@@ -1,4 +1,5 @@
 ﻿
+using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -8,10 +9,13 @@ namespace Bb.MolecularSite.PropertyGridComponent
     public partial class PropertyGrid
     {
 
+        [Inject]
+        public TranslateService TranslateService { get; set; }
+
 
         protected override Task OnInitializedAsync()
         {
-            Descriptor = new ObjectDescriptor(null);
+            Descriptor = new ObjectDescriptor(null, TranslateService);
             return base.OnInitializedAsync();
         }
 
@@ -24,7 +28,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 if (value != null)
                 {
                     _selectedObject = value;
-                    var d = new ObjectDescriptor(value);
+                    var d = new ObjectDescriptor(value, TranslateService);
                     d.Analyze();
                     this.Descriptor = d;
                 }
@@ -36,7 +40,6 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         bool success;
         string[] errors = { };
-        MudTextField<string> pwField1;
         MudForm form;
         private object _selectedObject;
     }

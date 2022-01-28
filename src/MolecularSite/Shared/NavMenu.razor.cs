@@ -23,7 +23,7 @@ namespace MolecularSite.Shared
                 translateService = new TranslateService();
 
             Menus = new List<DynamicServerMenu>();
-            var menuBuilder = new MenuConverter(CultureInfo.CurrentCulture, translateService);
+            var menuBuilder = new MenuConverter(translateService);
             if (uIService != null)
             {
                 var m = await uIService.GetUI(UIService.LeftMenu);

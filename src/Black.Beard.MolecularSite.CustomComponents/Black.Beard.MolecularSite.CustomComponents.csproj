@@ -12,6 +12,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="PropertyGridComponent\ComponentFieldBase1.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.21" />
 		<PackageReference Include="MudBlazor" Version="6.0.5" />
 	</ItemGroup>

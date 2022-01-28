@@ -1,0 +1,44 @@
+﻿@inherits ComponentFieldBaseList
+@using MudBlazor
+@using Bb.WebClient.UIComponents
+
+<MudPaper Elevation="25">
+    <MudToolBar>
+        <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="Add" />
+        @*<MudIconButton Icon="@Icons.Material.Outlined.Remove" Color="Color.Inherit" OnClick="Add" />*@
+    </MudToolBar>
+</MudPaper>
+
+<MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true" Absolute="true">
+
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+
+    <PropertyGrid SelectedObject="@CurrentItem" />
+
+</MudOverlay>
+
+<MudSimpleTable Style="overflow-x: auto;">
+    <thead>
+        <tr>
+            <th>Edit</th>
+
+            @foreach (PropertyObjectDescriptor h in Headings())
+            {
+                <th>@h.GetDisplay()</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Rows)
+        {
+            <tr>
+                <td><MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => Edit(row))" /></td>
+                @foreach (var itemCol in Descriptor.Items)
+                {
+                    <td>@itemCol.Value</td>
+                }
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+

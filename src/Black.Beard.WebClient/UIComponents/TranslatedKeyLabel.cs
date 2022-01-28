@@ -20,6 +20,9 @@ namespace Bb.WebClient.UIComponents
 
         }
 
+        public static TranslatedKeyLabel EmptyKey { get; } = new TranslatedKeyLabel(string.Empty, string.Empty, string.Empty, string.Empty);
+
+
         public string Application { get; }
 
         public string Context { get; }
@@ -37,7 +40,10 @@ namespace Bb.WebClient.UIComponents
         {
 
             if (string.IsNullOrEmpty(key))
-                return new TranslatedKeyLabel(string.Empty, string.Empty, string.Empty, string.Empty);
+                return TranslatedKeyLabel.EmptyKey;
+
+            if (!key.Contains("::"))
+                key = "::" + key;
 
             var items = key.Split("::");
 
@@ -58,6 +64,25 @@ namespace Bb.WebClient.UIComponents
 
         }
 
+        public static bool IsValidKey(string p)
+        {
+            return p.Contains("::");
+        }
+
+        public override bool Equals(object? obj)
+        {
+            
+            if (obj is TranslatedKeyLabel key)
+                return key.ToString() == this.ToString();
+
+            return false;
+
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
 
     }
 
