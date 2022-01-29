@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Bb.ComponentModel.Attributes;
 using Bb.ComponentModel;
 using System.Reflection;
+using Bb.Storages.ConfigurationProviders.SqlServer;
 
 namespace Bb.Configurations
 {
@@ -11,15 +12,35 @@ namespace Bb.Configurations
     public class ServiceConfigurationRepository
     {
 
-        public ServiceConfigurationRepository(InitializationLoader loader, IServiceProvider provider)
+        public ServiceConfigurationRepository(InitializationLoader loader, SqlServerConfigurationDataAccess datas, IServiceProvider provider)
         {
             this._loader = loader;
+            this._datas = datas;
             this._provider = provider;
         }
 
         public object Get(Type type)
         {
             return this._provider.GetService(type); 
+        }
+
+        public void Save(object instance, string sectionName)
+        {
+
+            var setting = this._datas.LoadConfiguration(sectionName);
+            if (setting != null)
+            {
+                setting.Update(instance);
+                if (setting.IsDirty)
+                    this._datas.UpdateConfiguration(setting);
+            }
+            else
+            {
+                setting = this._datas.GetNew(sectionName, "", "json");
+                setting.Update(instance);
+                this._datas.InsertConfiguration(setting);
+            }
+
         }
 
 
@@ -54,6 +75,7 @@ namespace Bb.Configurations
         }
 
         private readonly InitializationLoader _loader;
+        private readonly SqlServerConfigurationDataAccess _datas;
         private readonly IServiceProvider _provider;
 
     }

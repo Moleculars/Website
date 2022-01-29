@@ -1,9 +1,12 @@
-﻿using Bb.Configurations;
+﻿using Bb.ComponentModel;
+using Bb.ComponentModel.Attributes;
+using Bb.Configurations;
 using Bb.WebClient.UIComponents;
 using BlazorPropertyGridComponents.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using System.ComponentModel;
 
 namespace Bb.MolecularSite.Configurations.Pages
 {
@@ -19,15 +22,13 @@ namespace Bb.MolecularSite.Configurations.Pages
         [Inject]
         public ServiceConfigurationRepository? ServiceConfigurations { get; set; }
 
-
         [Inject]
-        public IJSRuntime JsRunTime { get; set; }
+        public ServiceConfigurationMapper ServiceConfigurationMapper { get; set; }
 
 
         public ItemEnumerable[]? Configurations { get; set; }
-               
-        public object CurrentItem { get; set; }
 
+        public object CurrentItem { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -53,7 +54,23 @@ namespace Bb.MolecularSite.Configurations.Pages
                 }
 
         }
-              
+
+        public void Save()
+        {
+            if (ServiceConfigurations != null)
+            {
+                var sectionName = ServiceConfigurationMapper.GetDefaultSectionName(CurrentItem.GetType());
+                ServiceConfigurations.Save(CurrentItem, sectionName);
+            }
+        }
+
+        public void Cancel()
+        {
+
+
+        }
+
+
 
     }
 

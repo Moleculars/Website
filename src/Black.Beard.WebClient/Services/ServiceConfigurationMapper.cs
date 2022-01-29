@@ -1,4 +1,5 @@
-﻿using Bb.WebHost.Startings;
+﻿using Bb.ComponentModel;
+using Bb.ComponentModel.Attributes;
 using Microsoft.Extensions.Configuration;
 using System;
 
@@ -25,10 +26,20 @@ namespace Bb.Configurations
         {
 
             if (string.IsNullOrEmpty(keyMapper))
-                keyMapper = CleanName(instance.GetType().Name);
+                keyMapper = GetDefaultSectionName(instance.GetType());
 
-            this._configuration.Bind(keyMapper, _configuration);
+            var datas = _configuration.GetSection(keyMapper);
+            ContentHelper.Map(instance, datas.Value);
 
+        }
+
+        public string GetDefaultSectionName(Type type)
+        {
+            var keyMapper = type.GetAttributes<ExposeClassAttribute>()
+                    .FirstOrDefault()?.ConfigurationKey
+                ?? CleanName(type.Name);
+
+            return keyMapper;
         }
 
         private static string CleanName(string txt)

@@ -9,20 +9,20 @@ namespace Bb.Configurations
 {
 
 
-    [ExposeClass(ConstantsCore.Configuration, LifeCycle = IocScopeEnum.Transiant)]
+    [ExposeClass(ConstantsCore.Configuration, LifeCycle = IocScopeEnum.Transiant, ConfigurationKey = "TestConfiguration")]
     [TranslationKey(WebClientConstants.MenuList, "::TestTransiantConfiguration::TypeName::Test configuration transiante")]
     public class TestTransiantConfiguration
     {
 
-        public TestTransiantConfiguration(ServiceConfigurationMapper? serviceBuilder)
+        public TestTransiantConfiguration(ServiceConfigurationMapper? mapper)
         {
 
             Tests = new List<ItemTestConfiguration>();
 
-            if (serviceBuilder == null)
-                throw new ArgumentNullException(nameof(serviceBuilder));
+            if (mapper == null)
+                throw new ArgumentNullException(nameof(mapper));
 
-            serviceBuilder.Build(this);
+            mapper.Build(this);
 
         }
 

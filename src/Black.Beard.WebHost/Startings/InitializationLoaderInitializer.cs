@@ -264,11 +264,8 @@ namespace Bb.WebHost.Startings
             var _configuration = new InitialConfiguration();
             self.InitialConfigurationRoot.Bind(typeof(InitialConfiguration).Name, _configuration);
 
-
-            _configuration.Loaders.Add(new Loader()
-            {
-                Type = typeof(FolderConfigurationLoader).AssemblyQualifiedName,
-            });
+            _configuration.Loaders.Add(new Loader() { Type = typeof(FolderConfigurationLoader).AssemblyQualifiedName });
+            _configuration.Loaders.Add(new Loader() { Type = typeof(SqlserverConfigurationLoader).AssemblyQualifiedName });
 
             self.InitialConfiguration = _configuration;
 

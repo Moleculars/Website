@@ -23,18 +23,16 @@ namespace Bb.MolecularSite.PropertyGridComponent
             get
             {
 
-                if (!initialized && Property != null)
-                {
-                    Reset();
-                    initialized = true;
-                }
+                if (Property != null)
+                    return (T)Load();
 
-                return _value;
+                return default(T);
 
             }
             set
             {
-                _value = value;
+                if (Property != null)
+                    Property.Value = value;
             }
 
         }
@@ -94,17 +92,10 @@ namespace Bb.MolecularSite.PropertyGridComponent
         }
 
 
-        public void Apply()
+        public object Load()
         {
-            if (Property != null)
-            {
-                Property.Value = _value;
-            }
-        }
 
-
-        public void Reset()
-        {
+            object _value = null;
 
             if (Property != null)
             {
@@ -149,11 +140,9 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
             }
 
+            return _value;
+
         }
-
-
-        private bool initialized = false;
-        private T? _value;
 
     }
 

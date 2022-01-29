@@ -1,91 +1,12 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MolecularSite.Data;
-using MudBlazor.Services;
-using Bb.WebHost.Startings;
-using Microsoft.OpenApi.Models;
-using Bb.Middleware;
 
-var builder = WebApplication.CreateBuilder(args);
+using MolecularSite.CommandLines;
 
-// Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddMudServices();
+/*
+ 
+   site run --e configConnexionString="Server=.;Database=BaseWebsite;Integrated Security=SSPI;Encrypt=true; TrustServerCertificate=true;"
 
-var loader = builder
-    .LoadConfiguration(args)
-    ;
+ */
 
-var useSwagger = loader != null
-    && loader.InitialConfiguration != null
-    && loader.InitialConfiguration.UseSwagger;
+var cmd = Bb.CommandLine.Run<Command, CommandLine>(args);
+//this.Result = cmd.Result;
 
-if (useSwagger)
-{
-
-    // Swagger
-    builder.Services.AddEndpointsApiExplorer();
-    // builder.Services.AddSwaggerGen();
-    builder.Services.AddSwaggerGen(options =>
-    {
-        options.SwaggerDoc("v1", new OpenApiInfo
-        {
-            Version = "v1",
-            Title = "ToDo API",
-            Description = "An ASP.NET Core Web API for managing ToDo items",
-            TermsOfService = new Uri("https://example.com/terms"),
-            Contact = new OpenApiContact
-            {
-                Name = "Example Contact",
-                Url = new Uri("https://example.com/contact")
-            },
-            License = new OpenApiLicense
-            {
-                Name = "Example License",
-                Url = new Uri("https://example.com/license")
-            }
-        });
-    });
-}
-
-var app = builder.Build()
-    .ConfigureInjectedServices(loader)
-    .ConfigureUseExceptionHandler(err => err.UseCustomErrors(loader))
-;
-
-if (useSwagger)
-{
-    // Swagger 
-    app.UseSwagger();
-    // app.UseSwaggerUI();
-
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = string.Empty;
-    });
-}
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    // The default HSTS value is 30 days. You may want to change
-    // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-else
-{
-    app
-        .AppendMiddleware<LoggingSupervisionMiddleware>();
-
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
-
-
-app.Run();

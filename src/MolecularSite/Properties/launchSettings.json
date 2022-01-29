@@ -17,12 +17,13 @@
     },
     "MolecularSite": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
+      "commandLineArgs": "site run --e configConnexionString=\"Server=.;Database=BaseWebsite;Integrated Security=SSPI;Encrypt=true; TrustServerCertificate=true;\"",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "dotnetRunMessages": true
     }
   }
 }

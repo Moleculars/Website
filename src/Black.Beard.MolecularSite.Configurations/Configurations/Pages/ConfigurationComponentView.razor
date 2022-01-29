@@ -40,9 +40,9 @@
     <MudItem xs=12 sm=7>
 
         <MudPaper>
-
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Button" OnClick="Cancel">@TranslateService.Translate("::Cancel")</MudButton>
+            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Button" OnClick="Save">@TranslateService.Translate("::Save")</MudButton>
             <PropertyGrid SelectedObject="@CurrentItem" />
-
         </MudPaper>
 
     </MudItem>
