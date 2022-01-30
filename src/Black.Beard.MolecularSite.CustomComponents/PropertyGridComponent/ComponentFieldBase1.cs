@@ -4,6 +4,7 @@ using System.Globalization;
 namespace Bb.MolecularSite.PropertyGridComponent
 {
 
+
     public partial class ComponentFieldBase<T> : ComponentFieldBase
     {
 
@@ -32,7 +33,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             set
             {
                 if (Property != null)
-                    Property.Value = value;
+                    Property.Value = Save(value);
             }
 
         }
@@ -91,8 +92,12 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         }
 
+        public virtual object Save(object item)
+        {
+            return item;
+        }
 
-        public object Load()
+        public virtual object Load()
         {
 
             object _value = null;

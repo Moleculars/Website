@@ -11,11 +11,61 @@ namespace Bb.MolecularSite.PropertyGridComponent
     public class PropertyObjectDescriptor
     {
 
-        public PropertyObjectDescriptor(PropertyDescriptor property, ObjectDescriptor parent)
+        static PropertyObjectDescriptor()
         {
 
+            _strategies = new Dictionary<Type, StrategyEditor>();
+
+            _strategies.Add(typeof(char), new StrategyEditor(PropertyKingView.Char, typeof(ComponentChar)));
+            _strategies.Add(typeof(string), new StrategyEditor(PropertyKingView.String, typeof(ComponentString)));
+            _strategies.Add(typeof(bool), new StrategyEditor(PropertyKingView.Bool, typeof(ComponentBool)));
+            _strategies.Add(typeof(bool?), new StrategyEditor(PropertyKingView.Bool, typeof(ComponentBool)));
+
+            _strategies.Add(typeof(Int16), new StrategyEditor(PropertyKingView.Int16, typeof(ComponentInt16)));
+            _strategies.Add(typeof(Int16?), new StrategyEditor(PropertyKingView.Int16, typeof(ComponentInt16)));
+
+            _strategies.Add(typeof(Int32), new StrategyEditor(PropertyKingView.Int32, typeof(ComponentInt32)));
+            _strategies.Add(typeof(Int32?), new StrategyEditor(PropertyKingView.Int32, typeof(ComponentInt32)));
+
+            _strategies.Add(typeof(Int64), new StrategyEditor(PropertyKingView.Int64, typeof(ComponentInt64)));
+            _strategies.Add(typeof(Int64?), new StrategyEditor(PropertyKingView.Int64, typeof(ComponentInt64)));
+
+            _strategies.Add(typeof(UInt16), new StrategyEditor(PropertyKingView.UInt16, typeof(ComponentUInt16)));
+            _strategies.Add(typeof(UInt16?), new StrategyEditor(PropertyKingView.UInt16, typeof(ComponentUInt16)));
+
+            _strategies.Add(typeof(UInt32), new StrategyEditor(PropertyKingView.UInt32, typeof(ComponentUInt32)));
+            _strategies.Add(typeof(UInt32?), new StrategyEditor(PropertyKingView.UInt32, typeof(ComponentInt32)));
+
+            _strategies.Add(typeof(UInt64), new StrategyEditor(PropertyKingView.UInt64, typeof(ComponentUInt64)));
+            _strategies.Add(typeof(UInt64?), new StrategyEditor(PropertyKingView.UInt64, typeof(ComponentInt64)));
+
+            _strategies.Add(typeof(DateTime), new StrategyEditor(PropertyKingView.Date, typeof(ComponentDate)));
+            _strategies.Add(typeof(DateTime?), new StrategyEditor(PropertyKingView.Date, typeof(ComponentDate)));
+
+            _strategies.Add(typeof(DateTimeOffset), new StrategyEditor(PropertyKingView.DateOffset, typeof(ComponentDateOffset)));
+            _strategies.Add(typeof(DateTimeOffset?), new StrategyEditor(PropertyKingView.DateOffset, typeof(ComponentDateOffset)));
+
+            _strategies.Add(typeof(TimeSpan), new StrategyEditor(PropertyKingView.Time, typeof(ComponentTime)));
+            _strategies.Add(typeof(TimeSpan?), new StrategyEditor(PropertyKingView.Time, typeof(ComponentTime)));
+
+            _strategies.Add(typeof(float), new StrategyEditor(PropertyKingView.Float, typeof(ComponentFloat)));
+            _strategies.Add(typeof(float?), new StrategyEditor(PropertyKingView.Float, typeof(ComponentFloat)));
+
+            _strategies.Add(typeof(double), new StrategyEditor(PropertyKingView.Double, typeof(ComponentDouble)));
+            _strategies.Add(typeof(double?), new StrategyEditor(PropertyKingView.Double, typeof(ComponentDouble)));
+
+            _strategies.Add(typeof(decimal), new StrategyEditor(PropertyKingView.Decimal, typeof(ComponentDecimal)));
+            _strategies.Add(typeof(decimal?), new StrategyEditor(PropertyKingView.Decimal, typeof(ComponentDecimal)));
+
+        }
+
+        public PropertyObjectDescriptor(PropertyDescriptor property, ObjectDescriptor parent)
+        {
+            this.Parameters = new Dictionary<string, object>();
+            this.Parameters.Add("Property", this);
+
             this.Parent = parent;
-            this._property = property;
+            this.PropertyDescriptor = property;
 
             this.Display = property.DisplayName ?? property.Name;
             this.Description = property.Description;
@@ -28,8 +78,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             this.Maximum = Int32.MaxValue;
             this.Step = 1;
             this._constraints = new List<ValidationAttribute>();
-            this.Type = _property.PropertyType;
-
+            this.Type = PropertyDescriptor.PropertyType;
 
 
             if (this.Type.IsGenericType && this.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -41,50 +90,18 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 this.SubType = typeof(void);
 
 
-            if (this.Type == typeof(char))
-                this.KingView = PropertyKingView.Char;
+            if (_strategies.TryGetValue(this.Type, out StrategyEditor? strategy))
+            {
+                this.EditorType = strategy.ComponentView;
+                this.KingView = strategy.PropertyKingView;
+            }
 
-            else if (this.Type == typeof(string))
-                this.KingView = PropertyKingView.String;
-
-            else if (this.Type == typeof(bool) || this.Type == typeof(bool?))
-                this.KingView = PropertyKingView.Bool;
-
-            else if (this.Type == typeof(Int16) || this.Type == typeof(Int16?))
-                this.KingView = PropertyKingView.Int16;
-
-            else if (this.Type == typeof(Int32) || this.Type == typeof(Int32?))
-                this.KingView = PropertyKingView.Int32;
-
-            else if (this.Type == typeof(Int64) || this.Type == typeof(Int64?))
-                this.KingView = PropertyKingView.Int64;
-
-            else if (this.Type == typeof(UInt16) || this.Type == typeof(UInt16?))
-                this.KingView = PropertyKingView.UInt16;
-
-            else if (this.Type == typeof(UInt16) || this.Type == typeof(UInt16?))
-                this.KingView = PropertyKingView.UInt32;
-
-            else if (this.Type == typeof(UInt64) || this.Type == typeof(UInt64?))
-                this.KingView = PropertyKingView.UInt64;
-
-            else if (this.Type == typeof(DateTime) || this.Type == typeof(DateTime?))
-                this.KingView = PropertyKingView.Date;
-
-            else if (this.Type == typeof(DateTimeOffset) || this.Type == typeof(DateTimeOffset?))
-                this.KingView = PropertyKingView.DateOffset;
-
-            else if (this.Type == typeof(TimeSpan) || this.Type == typeof(TimeSpan?))
-                this.KingView = PropertyKingView.Time;
-
-            else if (this.Type == typeof(float) || this.Type == typeof(float?))
-                this.KingView = PropertyKingView.Float;
-
-            else if (this.Type == typeof(Double) || this.Type == typeof(Double?))
-                this.KingView = PropertyKingView.Double;
-
-            else if (this.Type == typeof(Decimal) || this.Type == typeof(Decimal?))
-                this.KingView = PropertyKingView.Decimal;
+            else if (this.Type.IsEnum)
+            {
+                this.EditorType = typeof(ComponentEnumeration);
+                this.KingView = PropertyKingView.Enumeration;
+                this.ListProvider = typeof(EnumListProvider);
+            }
 
             else if (typeof(IEnumerable).IsAssignableFrom(this.Type))
             {
@@ -98,7 +115,6 @@ namespace Bb.MolecularSite.PropertyGridComponent
                     }
                 }
 
-
             }
 
 
@@ -110,7 +126,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             get
             {
 
-                var result = _property.GetValue(Parent.Instance);
+                var result = PropertyDescriptor.GetValue(Parent.Instance);
 
                 if (result == null)
                     return this.DefaultValue;
@@ -121,21 +137,32 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
             set
             {
-                _property.SetValue(Parent.Instance, value);
+                PropertyDescriptor.SetValue(Parent.Instance, value);
             }
 
         }
 
 
-        internal void Analyze()
+        internal void AnalyzeAttributes()
         {
 
-            foreach (Attribute attribute in _property.Attributes)
+            var attributes = PropertyDescriptor.Attributes.OfType<Attribute>().ToList();
+
+            foreach (Attribute attribute in attributes)
             {
+
                 if (attribute.GetType().Namespace != "System.Runtime.CompilerServices")
 
                     switch (attribute)
                     {
+
+                        case ListProviderAttribute listProviderAttribute:
+                            this.ListProvider = listProviderAttribute.EnumerationResolver;
+                            break;
+
+                        case EditorAttribute editor:
+                            this.EditorType = Type.GetType(editor.EditorTypeName);
+                            break;
 
                         case CategoryAttribute:
                         case DisplayNameAttribute:
@@ -187,11 +214,6 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
                         case DefaultValueAttribute defaultValue:
                             this.DefaultValue = defaultValue.Value;
-                            break;
-
-                        case EditorAttribute editor:
-                            if (System.Diagnostics.Debugger.IsAttached)
-                                System.Diagnostics.Debugger.Break();
                             break;
 
                         case PropertyTabAttribute propertyTab:
@@ -254,6 +276,8 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public Type Type { get; }
 
+        public IDictionary<string, object> Parameters { get; set; }
+
 
         public string GetDisplay()
         {
@@ -300,10 +324,17 @@ namespace Bb.MolecularSite.PropertyGridComponent
         public int Maximum { get; private set; }
 
         public float Step { get; private set; }
+
         public bool IsPassword { get; private set; }
 
-        private readonly PropertyDescriptor _property;
+        public Type? EditorType { get; private set; }
+
+        public Type ListProvider { get; private set; }
+
+        public PropertyDescriptor PropertyDescriptor { get; set; }
+
         private readonly List<ValidationAttribute> _constraints;
+        private static Dictionary<Type, StrategyEditor> _strategies;
 
     }
 
@@ -329,5 +360,65 @@ namespace Bb.MolecularSite.PropertyGridComponent
     //    public void Switch(object x) { matches[x.GetType()](x); }
     //    private Dictionary<Type, Func<object, T1>> matches = new Dictionary<Type, Func<object, T1>>();
     //}
+
+
+
+    public class StrategyEditor
+    {
+
+        public StrategyEditor(PropertyKingView propertyKingView, Type componentView)
+        {
+            this.PropertyKingView = propertyKingView;
+            this.ComponentView = componentView;
+        }
+
+        public PropertyKingView PropertyKingView { get; }
+
+        public Type ComponentView { get; }
+
+    }
+
+    public class EnumListProvider : IListProvider
+    {
+
+        public EnumListProvider()
+        {
+
+        }
+
+
+        public PropertyDescriptor Property { get; set; }
+
+        
+        public TranslateService TranslateService { get; set; }
+
+
+        public IEnumerable<ListItem> GetItems()
+        {
+
+            var values = Enum.GetValues(Property.PropertyType);
+            var fields = Property.PropertyType.GetFields();
+
+            foreach (var item in values)
+            {
+
+                var n = item.ToString();
+                var o = fields.Where(f => f.Name == n).First();
+                TranslatedKeyLabel label = TranslatedKeyLabel.GetFrom(o).FirstOrDefault() ?? n;
+
+                yield return new ListItem()
+                {
+                    Name = n,
+                    Value = item,
+                    Display = TranslateService.Translate(label),
+                };
+
+            }
+            
+
+        }
+
+
+    }
 
 }

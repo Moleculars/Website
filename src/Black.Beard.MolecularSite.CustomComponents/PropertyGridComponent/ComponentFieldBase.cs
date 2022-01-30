@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace Bb.MolecularSite.PropertyGridComponent
 {
 
-    public abstract partial class ComponentFieldBase : ComponentBase, INotifyPropertyChanged
+    public partial class ComponentFieldBase : ComponentBase, INotifyPropertyChanged
     {
 
         [Parameter]

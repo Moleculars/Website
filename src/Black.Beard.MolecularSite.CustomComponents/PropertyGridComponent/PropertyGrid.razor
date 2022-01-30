@@ -10,90 +10,19 @@
                 @if (Descriptor != null && Descriptor.Items != null)
                 {
 
-                    <MudExpansionPanels MultiExpansion="true">
+                    <MudCard>
                         @foreach (TranslatedKeyLabel category in Descriptor.Categories())
                         {
 
                             <MudExpansionPanel Text="@TranslateService.Translate(category)" IsExpanded="true">
                                 @foreach (PropertyObjectDescriptor property in Descriptor.ItemsByCategories(category))
                                 {
-                                    @switch (property.KingView)
-                                    {
-
-                                        case PropertyKingView.String:
-                                            <ComponentString Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Char:
-                                            <ComponentChar Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Bool:
-                                            <ComponentBool Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Int16:
-                                            <ComponentInt16 Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Int32:
-                                            <ComponentInt32 Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Int64:
-                                            <ComponentInt64 Property=@property />
-                                            break;
-
-                                        case PropertyKingView.UInt16:
-                                            <ComponentUInt16 Property=@property />
-                                            break;
-
-                                        case PropertyKingView.UInt32:
-                                            <ComponentUInt32 Property=@property />
-                                            break;
-
-                                        case PropertyKingView.UInt64:
-                                            <ComponentUInt64 Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Date:
-                                            <ComponentDate Property=@property />
-                                            break;
-
-                                        case PropertyKingView.DateOffset:
-                                            <ComponentDateOffset Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Time:
-                                            <ComponentTime Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Float:
-                                            <ComponentFloat Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Double:
-                                            <ComponentDouble Property=@property />
-                                            break;
-
-                                        case PropertyKingView.Decimal:
-                                            <ComponentDecimal Property=@property />
-                                            break;
-
-                                            case PropertyKingView.List:
-                                            <ComponentList Property=@property />
-                                            break;
-
-                                        default:
-                                            break;
-
-                                    }
-
+                                    <DynamicComponent Type="@property.EditorType" Parameters="@property.Parameters" />
                                 }
                             </MudExpansionPanel>
 
                         }
-                    </MudExpansionPanels>
+                    </MudCard>
 
                 }
             </MudForm>

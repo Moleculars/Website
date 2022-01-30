@@ -27,7 +27,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
                 var p = new PropertyObjectDescriptor(property, this);
                 _items.Add(p);
-                p.Analyze();
+                p.AnalyzeAttributes();
             }
 
         }

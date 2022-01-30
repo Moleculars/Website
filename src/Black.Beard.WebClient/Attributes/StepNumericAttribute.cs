@@ -1,6 +1,7 @@
 ﻿namespace Bb.Attributes
 {
 
+
     [System.AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class StepNumericAttribute : Attribute
     {
@@ -13,5 +14,6 @@
         public float Step { get; }
 
     }
+
 
 }

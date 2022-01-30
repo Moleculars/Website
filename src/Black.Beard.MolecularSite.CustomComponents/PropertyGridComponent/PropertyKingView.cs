@@ -21,6 +21,7 @@
         Decimal,
         Object,
         List,
+        Enumeration,
     }
 
 }

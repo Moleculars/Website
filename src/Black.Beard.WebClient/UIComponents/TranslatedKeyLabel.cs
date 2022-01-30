@@ -1,5 +1,7 @@
-﻿using Bb.WebClient.Exceptions;
+﻿using Bb.ComponentModel.Attributes;
+using Bb.WebClient.Exceptions;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Bb.WebClient.UIComponents
 {
@@ -55,7 +57,7 @@ namespace Bb.WebClient.UIComponents
 
             if (items.Length == 3)
             {
-                
+
                 return new TranslatedKeyLabel(items[0], items[1], items[2], string.Empty);
 
             }
@@ -71,7 +73,7 @@ namespace Bb.WebClient.UIComponents
 
         public override bool Equals(object? obj)
         {
-            
+
             if (obj is TranslatedKeyLabel key)
                 return key.ToString() == this.ToString();
 
@@ -83,6 +85,19 @@ namespace Bb.WebClient.UIComponents
         {
             return this.ToString().GetHashCode();
         }
+
+
+        public static IEnumerable<TranslatedKeyLabel> GetFrom(MemberInfo info)
+        {
+
+            var items = info.GetCustomAttributes<TranslationKeyAttribute>()
+                .ToList();
+
+            foreach (TranslationKeyAttribute attribute in items)
+                yield return (TranslatedKeyLabel)attribute.Key;
+
+        }
+
 
     }
 

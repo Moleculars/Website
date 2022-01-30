@@ -3,6 +3,11 @@
 @using Bb.MolecularSite.PropertyGridComponent
 
 
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+    <MudButton ButtonType="ButtonType.Button" OnClick="Cancel">@TranslateService.Translate("::Cancel")</MudButton>
+    <MudButton ButtonType="ButtonType.Button" OnClick="Save">@TranslateService.Translate("::Save")</MudButton>
+</MudButtonGroup>
+
 <MudGrid Spacing="2">
 
     <MudItem xs=12 sm=5>
@@ -39,11 +44,7 @@
 
     <MudItem xs=12 sm=7>
 
-        <MudPaper>
-            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Button" OnClick="Cancel">@TranslateService.Translate("::Cancel")</MudButton>
-            <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Button" OnClick="Save">@TranslateService.Translate("::Save")</MudButton>
-            <PropertyGrid SelectedObject="@CurrentItem" />
-        </MudPaper>
+        <PropertyGrid SelectedObject="@CurrentItem" />
 
     </MudItem>
 
