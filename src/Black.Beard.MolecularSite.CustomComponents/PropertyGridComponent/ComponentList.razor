@@ -2,43 +2,46 @@
 @using MudBlazor
 @using Bb.WebClient.UIComponents
 
-<MudPaper Elevation="25">
-    <MudToolBar>
-        <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="Add" />
-        @*<MudIconButton Icon="@Icons.Material.Outlined.Remove" Color="Color.Inherit" OnClick="Add" />*@
-    </MudToolBar>
-</MudPaper>
 
-<MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true" Absolute="true">
+<MudGrid Spacing="2" Justify="Justify.SpaceEvenly">
 
-    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+    <MudItem xs="6">
 
-    <PropertyGrid SelectedObject="@CurrentItem" />
+        <MudPaper Elevation="25">
+            <MudToolBar Dense="true">
+                <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="Add" />
+                @*<MudIconButton Icon="@Icons.Material.Outlined.Remove" Color="Color.Inherit" OnClick="Add" />*@
+            </MudToolBar>
+        </MudPaper>
 
-</MudOverlay>
-
-<MudSimpleTable Style="overflow-x: auto;">
-    <thead>
-        <tr>
-            <th>Edit</th>
-
-            @foreach (PropertyObjectDescriptor h in Headings())
-            {
-                <th>@h.GetDisplay()</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var row in Rows)
-        {
-            <tr>
-                <td><MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => Edit(row))" /></td>
-                @foreach (var itemCol in Descriptor.Items)
+        <MudSimpleTable Style="overflow-x: auto;height:150px" Dense="true">
+            <thead>
+                <tr>
+                    <th></th>
+                    @foreach (PropertyObjectDescriptor h in Headings())
+                    {
+                        <th>@h.GetDisplay()</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Rows)
                 {
-                    <td>@itemCol.Value</td>
+                    <tr>
+                        <td><MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => Edit(row))" /></td>
+                        @foreach (var itemCol in Descriptor.Items)
+                        {
+                            <td>@itemCol.Value</td>
+                        }
+                    </tr>
                 }
-            </tr>
-        }
-    </tbody>
-</MudSimpleTable>
+            </tbody>
+        </MudSimpleTable>
 
+    </MudItem>
+
+    <MudItem xs="6" >
+        <PropertyGrid SelectedObject="@CurrentItem" />
+    </MudItem>
+
+</MudGrid>

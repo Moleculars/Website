@@ -15,7 +15,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         protected override Task OnInitializedAsync()
         {
-            Descriptor = new ObjectDescriptor(null, TranslateService);
+            Descriptor = new ObjectDescriptor(null, null, TranslateService);
             return base.OnInitializedAsync();
         }
 
@@ -28,7 +28,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 if (value != null)
                 {
                     _selectedObject = value;
-                    var d = new ObjectDescriptor(value, TranslateService);
+                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService);
                     d.Analyze();
                     this.Descriptor = d;
                 }

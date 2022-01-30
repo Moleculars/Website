@@ -112,6 +112,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                     {
                         this.SubType = this.Type.GetGenericArguments()[0];
                         this.KingView = PropertyKingView.List;
+                        this.EditorType = typeof(ComponentList);
                     }
                 }
 

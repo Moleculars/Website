@@ -31,28 +31,29 @@ namespace Bb.Configurations
         public string? Name { get; set; }
 
 
-        [Description("::TestTransiantConfiguration::SelectAnItem::Select an Item")]
-        public Enum1 MyEnum { get; set; }
+        //[Description("::TestTransiantConfiguration::SelectAnItem::Select an Item")]
+        //public Enum1 MyEnum { get; set; }
 
 
-        //[Description("::TestTransiantConfiguration::Counter::version of the configuration")]
-        //[DefaultValue(-1)]
-        //[Range(-1, 200)]
-        //[StepNumeric(0.2f)]
-        //public int? Counter { get; set; }
+        ////[Description("::TestTransiantConfiguration::Counter::version of the configuration")]
+        ////[DefaultValue(-1)]
+        ////[Range(-1, 200)]
+        ////[StepNumeric(0.2f)]
+        ////public int? Counter { get; set; }
 
 
-        [Description("::TestTransiantConfiguration::Date::date of the configuration")]
-        [DefaultValue("2/11/1971")]
-        [DisplayFormat(DataFormatString = "dd/MM/yyyy")]
-        public DateTime? Date { get; set; }
+        //[Description("::TestTransiantConfiguration::Date::date of the configuration")]
+        //[DefaultValue("2/11/1971")]
+        //[DisplayFormat(DataFormatString = "dd/MM/yyyy")]
+        //public DateTime? Date { get; set; }
 
+        [Description("::TestTransiantConfiguration::SartDate::Start at")]
+        public TimeSpan? StartAt { get; set; }
 
         //[Description("::TestTransiantConfiguration::Checkbox::This is a checkbox")]
         //public bool Checkbox { get; set; }
 
-        //public List<ItemTestConfiguration> Tests { get; set; }
-
+        public List<ItemTestConfiguration> Tests { get; set; }
 
 
     }

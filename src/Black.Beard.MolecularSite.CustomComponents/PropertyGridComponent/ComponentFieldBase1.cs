@@ -25,7 +25,11 @@ namespace Bb.MolecularSite.PropertyGridComponent
             {
 
                 if (Property != null)
-                    return (T)Load();
+                {
+                    var r = Load();
+                    if (r != null)
+                        return (T)r;
+                }
 
                 return default(T);
 
@@ -97,7 +101,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             return item;
         }
 
-        public virtual object Load()
+        public virtual object? Load()
         {
 
             object _value = null;
@@ -109,6 +113,9 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 {
 
                     var v = Property.Value;
+                    if (v == null)
+                        return null;
+
                     var c = object.Equals(v, _value);
 
                     if (this.Property.KingView == PropertyKingView.Date || this.Property.KingView == PropertyKingView.DateOffset)

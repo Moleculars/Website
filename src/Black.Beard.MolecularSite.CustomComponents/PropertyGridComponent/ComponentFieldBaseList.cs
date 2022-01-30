@@ -32,8 +32,14 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
                     _value = Property.Value;
 
-                    this.Descriptor = new ObjectDescriptor(_value, this.Property.Parent.TranslateService);
+                    if (_value == null)
+                    {
+                        _value = Activator.CreateInstance(Property.Type);
+                        Property.Value = _value;
+                    }
 
+                    this.Descriptor = new ObjectDescriptor(null, this.Property.SubType, this.Property.Parent.TranslateService);
+                    this.Descriptor.Analyze();
                 }
                 catch (Exception ex)
                 {
@@ -64,8 +70,12 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
                 var items = Property.Value as IEnumerable;
 
-                foreach (object item in items)
-                    yield return item;
+                if (items != null)
+                    foreach (object item in items)
+                    {
+                        this.Descriptor.Instance = item;
+                        yield return item;
+                    }
             }
         }
 
@@ -77,7 +87,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             method.Invoke(_value, new object[] { newItem });
 
             if (this.CollectionChanged != null)
-                this.CollectionChanged(this,new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem));
+                this.CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem));
 
             PropertyChange();
 
@@ -92,10 +102,8 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public void Edit(object item)
         {
-            CurrentItem = item; 
-            isVisible = true;
+            CurrentItem = item;
             StateHasChanged();
-
         }
 
         public object CurrentItem { get; set; }
@@ -103,7 +111,6 @@ namespace Bb.MolecularSite.PropertyGridComponent
         public ObjectDescriptor Descriptor { get; private set; }
 
         private object _value;
-        protected bool isVisible;
 
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
     }
