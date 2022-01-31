@@ -6,7 +6,7 @@ using Bb.ComponentModel;
 using System.Reflection;
 using Bb.Storages.ConfigurationProviders.SqlServer;
 
-namespace Bb.Configurations
+namespace Bb.Configurations.services
 {
 
     public class ServiceConfigurationRepository

@@ -93,11 +93,9 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         }
 
-        public void Del()
+        public void Del(object item)
         {
-
-
-
+            CurrentItem = item;
         }
 
         public void Edit(object item)

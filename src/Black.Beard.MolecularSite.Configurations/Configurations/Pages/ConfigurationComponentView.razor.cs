@@ -1,14 +1,9 @@
 ﻿using Bb.ComponentModel;
-using Bb.ComponentModel.Attributes;
-using Bb.Configurations;
+using Bb.Configurations.services;
 using Bb.WebClient.UIComponents;
-using BlazorPropertyGridComponents.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using System.ComponentModel;
 
-namespace Bb.MolecularSite.Configurations.Pages
+namespace Bb.Configurations.Pages
 {
 
     public partial class ConfigurationComponentView

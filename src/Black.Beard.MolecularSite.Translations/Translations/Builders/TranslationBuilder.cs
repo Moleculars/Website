@@ -1,24 +1,27 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
-using Bb.Configurations.services;
+using Bb.Configurations;
 using Bb.WebClient.ApplicationBuilders;
+using Bb.WebClient.UIComponents;
 
-namespace Bb.Configurations.Builders
+
+namespace Bb.Translations.Builders
 {
 
 
     [ExposeClass(ConstantsCore.Initialization, ExposedType = typeof(IApplicationBuilderInitializer), LifeCycle = IocScopeEnum.Transiant)]
-    public class ConfigurationBuilder : IApplicationBuilderInitializer
+    public class TranslationBuilder : IApplicationBuilderInitializer
     {
 
-        public ConfigurationBuilder()
+        public TranslationBuilder()
         {
 
         }
 
         public void Initialize(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton(typeof(ServiceConfigurationRepository));
+            //services.AddSingleton(typeof(ServiceConfigurationMapper));
+            //services.AddSingleton(typeof(ServiceConfigurationRepository));
         }
 
 

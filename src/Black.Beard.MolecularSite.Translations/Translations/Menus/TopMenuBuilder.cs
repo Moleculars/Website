@@ -3,7 +3,7 @@ using Bb.ComponentModel.Attributes;
 using Bb.WebClient.UIComponents;
 using Bb.WebClient.UIComponents.Glyphs;
 
-namespace Bb.Configurations.Menus
+namespace Bb.Translations.Menus
 {
 
     [ExposeClass(ConstantsCore.Initialization)]

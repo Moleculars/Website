@@ -47,7 +47,8 @@ namespace Bb.Configurations
         //[DisplayFormat(DataFormatString = "dd/MM/yyyy")]
         //public DateTime? Date { get; set; }
 
-        [Description("::TestTransiantConfiguration::SartDate::Start at")]
+        [DisplayName("::TestTransiantConfiguration::StartDate::Start at")]
+        [Description("::TestTransiantConfiguration::StartDateDescription::Specify the Start date")]
         public TimeSpan? StartAt { get; set; }
 
         //[Description("::TestTransiantConfiguration::Checkbox::This is a checkbox")]

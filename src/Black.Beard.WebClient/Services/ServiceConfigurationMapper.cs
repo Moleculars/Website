@@ -29,7 +29,8 @@ namespace Bb.Configurations
                 keyMapper = GetDefaultSectionName(instance.GetType());
 
             var datas = _configuration.GetSection(keyMapper);
-            ContentHelper.Map(instance, datas.Value);
+            if (datas.Value != null)
+                ContentHelper.Map(instance, datas.Value);
 
         }
 

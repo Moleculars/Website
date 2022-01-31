@@ -5,7 +5,7 @@ using Bb.WebClient.UIComponents.Glyphs;
 using Microsoft.AspNetCore.Components.Routing;
 using System;
 
-namespace Bb.Configurations.Menus
+namespace Bb.Translations.Menus
 {
 
     [ExposeClass(ConstantsCore.Initialization)]
@@ -23,24 +23,14 @@ namespace Bb.Configurations.Menus
         public object Run(UIService service)
         {
 
-            var guidConfigurations = UIService.Guids.Configurations;
+            var guidTranslations = UIService.Guids.Translations;
 
-            var home = service.GetMenu(UIService.LeftMenu, this._guidHome);
+            var home = service.GetMenu(UIService.LeftMenu, this._guidHome);       
 
-            //service.GetMenuOrCreate(UIService.LeftMenu, null, "::Counter")
-            //    .SetAction(NavLinkMatch.Prefix, "/counter")
-            //    .SetIcon(GlyphFilled.Add)
-            //    ;
-
-            //service.GetMenuOrCreate(UIService.LeftMenu, null, "::Fetch data")
-            //    .SetAction(NavLinkMatch.Prefix, "/fetchdata")
-            //    .SetIcon(GlyphFilled.Add)
-            //    ;
-
-            service.GetMenuOrCreate(UIService.LeftMenu, guidConfigurations, "::Configuration")
-                .SetAction(NavLinkMatch.Prefix, "/configurations")
+            service.GetMenuOrCreate(UIService.LeftMenu, guidTranslations, "::Translations")
+                .SetAction(NavLinkMatch.Prefix, "/Translations")
                 .SetKeyboardArrowDown(false)
-                .SetIcon(GlyphOutlined.Settings)
+                .SetIcon(GlyphFilled.Translate)
                 ;
 
             return 0;

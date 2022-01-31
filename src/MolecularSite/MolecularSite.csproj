@@ -15,8 +15,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Black.Beard.MolecularSite.Configurations\Black.Beard.MolecularSite.Configurations.csproj" />
+    <ProjectReference Include="..\Black.Beard.MolecularSite.Translations\Black.Beard.MolecularSite.Translations.csproj" />
     <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
     <ProjectReference Include="..\Black.Beard.WebHost\Black.Beard.WebHost.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

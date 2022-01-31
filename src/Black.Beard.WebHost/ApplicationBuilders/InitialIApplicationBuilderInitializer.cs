@@ -1,5 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.Configurations;
 using Bb.WebClient.ApplicationBuilders;
 using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,7 @@ namespace Bb.WebHost.ApplicationBuilders
         public void Initialize(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton(typeof(UIService));
+            services.AddSingleton(typeof(ServiceConfigurationMapper));
         }
 
 

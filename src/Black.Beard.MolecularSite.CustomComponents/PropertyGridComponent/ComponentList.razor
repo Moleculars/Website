@@ -18,6 +18,7 @@
             <thead>
                 <tr>
                     <th></th>
+                    <th></th>
                     @foreach (PropertyObjectDescriptor h in Headings())
                     {
                         <th>@h.GetDisplay()</th>
@@ -29,6 +30,7 @@
                 {
                     <tr>
                         <td><MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => Edit(row))" /></td>
+                        <td><MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => Del(row))" /></td>
                         @foreach (var itemCol in Descriptor.Items)
                         {
                             <td>@itemCol.Value</td>
