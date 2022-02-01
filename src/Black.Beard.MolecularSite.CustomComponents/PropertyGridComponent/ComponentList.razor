@@ -3,10 +3,6 @@
 @using Bb.WebClient.UIComponents
 
 
-<MudGrid Spacing="2" Justify="Justify.SpaceEvenly">
-
-    <MudItem xs="6">
-
         <MudPaper Elevation="25">
             <MudToolBar Dense="true">
                 <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="Add" />
@@ -40,10 +36,4 @@
             </tbody>
         </MudSimpleTable>
 
-    </MudItem>
-
-    <MudItem xs="6" >
         <PropertyGrid SelectedObject="@CurrentItem" />
-    </MudItem>
-
-</MudGrid>

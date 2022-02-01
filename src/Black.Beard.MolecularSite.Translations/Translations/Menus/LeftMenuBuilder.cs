@@ -27,7 +27,7 @@ namespace Bb.Translations.Menus
 
             var home = service.GetMenu(UIService.LeftMenu, this._guidHome);       
 
-            service.GetMenuOrCreate(UIService.LeftMenu, guidTranslations, "::Translations")
+            service.GetMenuOrCreate(UIService.LeftMenu, guidTranslations, "l:en-us,d:Translations")
                 .SetAction(NavLinkMatch.Prefix, "/Translations")
                 .SetKeyboardArrowDown(false)
                 .SetIcon(GlyphFilled.Translate)

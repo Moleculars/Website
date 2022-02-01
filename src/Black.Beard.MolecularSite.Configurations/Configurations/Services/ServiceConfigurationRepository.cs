@@ -21,7 +21,7 @@ namespace Bb.Configurations.services
 
         public object Get(Type type)
         {
-            return this._provider.GetService(type); 
+            return this._provider.GetService(type);
         }
 
         public void Save(object instance, string sectionName)
@@ -55,7 +55,7 @@ namespace Bb.Configurations.services
                 if (!_dic.TryGetValue(item.Assembly.FullName, out ItemEnumerable<Assembly>? list))
                 {
                     var n = item.Assembly.GetName().Name;
-                    var labelAssembly = new TranslatedKeyLabel("", nameof(ServiceConfigurationRepository), n, n);
+                    var labelAssembly = new TranslatedKeyLabel(nameof(ServiceConfigurationRepository), n, n);
                     _dic.Add(item.Assembly.FullName, list = new ItemEnumerable<Assembly>(item.Assembly, labelAssembly));
                 }
 
@@ -65,10 +65,26 @@ namespace Bb.Configurations.services
                     ?.Key
                     ;
 
-                TranslatedKeyLabel label = attribute ?? new TranslatedKeyLabel("", item.Name, WebClientConstants.MenuList, item.Name);
+                TranslatedKeyLabel label = attribute ?? new TranslatedKeyLabel(item.Name, WebClientConstants.MenuList, item.Name);
                 list.Subs.Add(new ItemEnumerable<Type>(item, label));
 
             }
+
+            //HashSet<Assembly> _h = new HashSet<Assembly>();
+            //var items = TypeDiscovery.Instance
+            //    .GetTypes((t) =>
+            //    {
+            //        _h.Add(t.Assembly);
+            //        if (typeof(System.Configuration.ConfigurationElementCollection).IsAssignableFrom(t))
+            //            return true;
+            //        if (t.BaseType == typeof(System.Configuration.ConfigurationSection))
+            //            return true;
+            //            //if (t.Assembly == typeof(System.Configuration.ConnectionStringSettingsCollection).Assembly)
+            //            //return true;
+            //        return false;
+            //    })
+            //    .ToList();
+            //var _items = _h.OrderBy(c => c.FullName).ToList();
 
             return _dic.Values.ToArray();
 

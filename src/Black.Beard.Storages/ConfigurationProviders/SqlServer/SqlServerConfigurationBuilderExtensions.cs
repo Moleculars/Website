@@ -4,7 +4,6 @@
 namespace Bb.Storages.ConfigurationProviders.SqlServer
 {
 
-
     /// <summary>
     /// https://mousavi310.github.io/posts/a-refreshable-sql-server-configuration-provider-for-net-core/
     /// </summary>

@@ -27,17 +27,7 @@ namespace Bb.Configurations.Menus
 
             var home = service.GetMenu(UIService.LeftMenu, this._guidHome);
 
-            //service.GetMenuOrCreate(UIService.LeftMenu, null, "::Counter")
-            //    .SetAction(NavLinkMatch.Prefix, "/counter")
-            //    .SetIcon(GlyphFilled.Add)
-            //    ;
-
-            //service.GetMenuOrCreate(UIService.LeftMenu, null, "::Fetch data")
-            //    .SetAction(NavLinkMatch.Prefix, "/fetchdata")
-            //    .SetIcon(GlyphFilled.Add)
-            //    ;
-
-            service.GetMenuOrCreate(UIService.LeftMenu, guidConfigurations, "::Configuration")
+            service.GetMenuOrCreate(UIService.LeftMenu, guidConfigurations, "l:en-us,d:Configuration")
                 .SetAction(NavLinkMatch.Prefix, "/configurations")
                 .SetKeyboardArrowDown(false)
                 .SetIcon(GlyphOutlined.Settings)

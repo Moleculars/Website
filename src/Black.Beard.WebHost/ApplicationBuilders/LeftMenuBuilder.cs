@@ -25,7 +25,7 @@ namespace Bb.WebHost.ApplicationBuilders
             var guidHome = UIService.Guids.Home;
             var guidConfigurations = UIService.Guids.Configurations;
 
-            service.GetMenuOrCreate(UIService.LeftMenu, guidHome, "::Home")
+            service.GetMenuOrCreate(UIService.LeftMenu, guidHome, "l:en-us, d:Home")
                 .SetActionMatchAll()
                 .SetIcon(GlyphFilled.Home)
                 ;

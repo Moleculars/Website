@@ -1,0 +1,25 @@
+﻿@typeparam T
+@using MudBlazor
+
+<MudSimpleTable Dense="true" Hover="false" Bordered="false" Striped="false" Style="overflow-x: auto;">
+    <thead>
+        <tr>
+            @foreach (var h in Headings())
+            {
+                <th>@TranslateService.Translate(h.Display)</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Descriptor != null)
+            @foreach (var row in Rows)
+            {
+                <tr>
+                    @foreach (var itemCol in Descriptor.Items)
+                    {
+                        <td>@itemCol.Value</td>
+                    }
+                </tr>
+            }
+    </tbody>
+</MudSimpleTable>

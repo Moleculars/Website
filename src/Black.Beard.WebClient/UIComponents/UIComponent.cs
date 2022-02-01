@@ -12,7 +12,7 @@ namespace Bb.WebClient.UIComponents
         {
             this.Uuid = uuid ?? Guid.NewGuid();
             this.Children = this._children = new List<UIComponent>();
-            this.Display = display ?? string.Empty;
+            this.Display = display;
             this.Roles = new HashSet<string>();
             this.Icon = Glyph.Empty;
             this.Type = string.Empty;

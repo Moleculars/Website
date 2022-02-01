@@ -1,61 +1,25 @@
-﻿using Bb.WebClient.UIComponents;
-using System.ComponentModel;
-
-namespace Bb.Attributes
+﻿namespace Bb.Attributes
 {
-    [System.AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
+    [System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Struct, Inherited = false, AllowMultiple = true)]
     public sealed class ListProviderAttribute : Attribute
     {
 
-        // This is a positional argument
+        /// <summary>
+        /// new instance of <see cref="ListProviderAttribute"/>
+        /// </summary>
+        /// <param name="typeListResolver">the type must implement <see cref="IListProvider"/> </param>
+        /// <exception cref="ArgumentException">if the type not implement <see cref="IListProvider"/> </exception>
         public ListProviderAttribute(Type typeListResolver)
         {
+
+            if (!typeof(IListProvider).IsAssignableFrom(typeListResolver))
+                throw new ArgumentException($"{typeListResolver} must implement {typeof(IListProvider)}");
+
             this.EnumerationResolver = typeListResolver;
+
         }
 
         public Type EnumerationResolver { get; }
-
-    }
-
-
-    public interface IListProvider
-    {
-
-
-        PropertyDescriptor Property { get; set; }
-
-        TranslateService TranslateService { get; set; }
-
-
-        IEnumerable<ListItem> GetItems();
-
-
-    }
-
-    public class ListItem
-    {
-
-        public string Name { get; set; }
-
-        public string Display { get; set; }
-
-        public object Value { get; set; }
-
-        public override string ToString()
-        {
-            return Display.ToString();
-        }
-
-        public override bool Equals(object o)
-        {
-            var other = o as ListItem;
-            return other?.Value == Value;
-        }
-
-        public override int GetHashCode()
-        {
-            return Value.GetHashCode();
-        }
 
     }
 

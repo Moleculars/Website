@@ -30,7 +30,7 @@ namespace Bb.WebHost.ApplicationBuilders
                 ;
 
             foreach (var item in _translateService.AvailableCultures)
-                menuLanguages.Add(new UIComponent(null, "::" + item.NativeName));
+                menuLanguages.Add(new UIComponent(null, "l:en-us, d:" + item.EnglishName));
 
             return 0;
 

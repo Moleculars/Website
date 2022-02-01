@@ -11,11 +11,21 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
     public class SqlServerConfigurationDataAccess : IDisposable
     {
 
+        public SqlServerConfigurationDataAccess(ConnectionSettings settings, string connectionStringName, int? refreshInterval, string tableName = "settings")
+        {
+
+            this._tableName = tableName;
+            _sql =  SqlProcessor.GetSqlProcessor(settings.ConnectionStringSettings.GetConnectionString(connectionStringName));
+
+            if (refreshInterval.HasValue)
+                SqlServerWatcher = new SqlServerPeriodicalWatcher(TimeSpan.FromSeconds(refreshInterval.Value));
+
+        }
 
         public SqlServerConfigurationDataAccess(string SettingConnectionString, int? refreshInterval, string tableName = "settings")
         {
             this._tableName = tableName;
-            _sql = new SqlProcessor(SettingConnectionString, SqlClientFactory.Instance);
+            _sql = SqlProcessor.GetSqlProcessor(SettingConnectionString, SqlClientFactory.Instance);
 
             if (refreshInterval.HasValue)
                 SqlServerWatcher = new SqlServerPeriodicalWatcher(TimeSpan.FromSeconds(refreshInterval.Value));

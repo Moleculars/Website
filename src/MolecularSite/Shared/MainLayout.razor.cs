@@ -23,10 +23,7 @@ namespace MolecularSite.Shared
 
         protected override async Task OnInitializedAsync()
         {
-
-            if (translateService ==null)
-                translateService = new TranslateService();
-
+            
             menus = new List<DynamicServerMenu>();
             var menuBuilder = new MenuConverter(translateService);
             if (UIService != null)

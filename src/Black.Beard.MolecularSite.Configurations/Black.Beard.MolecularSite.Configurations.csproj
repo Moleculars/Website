@@ -12,7 +12,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Configurations\Configurations.cs" />
 	  <Compile Remove="Configurations\TestConfiguration.cs" />
+	  <Compile Remove="Configurations\TypeListProvider.cs" />
+	  <Compile Remove="Configurations\TypeToStringConverter.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

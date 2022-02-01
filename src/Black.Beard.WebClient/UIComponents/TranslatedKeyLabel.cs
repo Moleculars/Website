@@ -1,76 +1,79 @@
-﻿using Bb.ComponentModel.Attributes;
-using Bb.WebClient.Exceptions;
+﻿using Bb.WebClient.Exceptions;
 using System.Diagnostics;
-using System.Reflection;
+using System.Globalization;
+using System.Text;
 
 namespace Bb.WebClient.UIComponents
 {
 
-
+    /// <summary>
+    /// "p:path, k:key, l:en-us, d:default value"
+    /// </summary>
     [DebuggerDisplay("{DefaultDisplay}")]
     public class TranslatedKeyLabel
     {
 
-        public TranslatedKeyLabel(string application, string context, string key, string defaultDisplay)
+        public TranslatedKeyLabel()
         {
+            Culture = CultureInfo.InvariantCulture;
+        }
 
-            this.Application = application;
-            this.Context = context;
+        public TranslatedKeyLabel(string context, string key, string defaultDisplay, CultureInfo? culture = null)
+        {
+            Culture = culture ?? CultureInfo.InvariantCulture;
+            this.Path = context;
             this.Key = key;
 
             this.DefaultDisplay = defaultDisplay;
 
         }
 
-        public static TranslatedKeyLabel EmptyKey { get; } = new TranslatedKeyLabel(string.Empty, string.Empty, string.Empty, string.Empty);
+        public static TranslatedKeyLabel EmptyKey { get; } = new TranslatedKeyLabel(string.Empty, string.Empty, string.Empty);
+    
+        public string? Path { get; private set; }
 
+        public string? Key { get; private set; }
 
-        public string Application { get; }
+        public CultureInfo Culture { get; private set; }
 
-        public string Context { get; }
+        public string? DefaultDisplay { get; private set; }
 
-        public string Key { get; }
-
-        public string DefaultDisplay { get; }
+        public bool IsNotValidKey { get; private set; }
 
         public override string ToString()
         {
-            return $"{Application}::{Context}::{Key}";
+
+            List<string> list = new List<string>();
+
+            if (!string.IsNullOrEmpty(Path))
+                list.Add("p:" + Path);
+
+            if (!string.IsNullOrEmpty(Key))
+                list.Add("k:" + Key);
+
+            if (Culture != CultureInfo.InvariantCulture)
+                list.Add("l:" + Culture.IetfLanguageTag);
+
+            if (!string.IsNullOrEmpty(DefaultDisplay))
+                list.Add("d:" + DefaultDisplay);
+
+            StringBuilder sb = new StringBuilder();
+            string comma = string.Empty;
+            foreach (var item in list)
+            {
+                sb.Append(comma);
+                sb.Append(item);
+                comma = ", ";
+            }
+
+            return sb.ToString();
         }
 
         public static implicit operator TranslatedKeyLabel(string key)
         {
-
-            if (string.IsNullOrEmpty(key))
-                return TranslatedKeyLabel.EmptyKey;
-
-            if (!key.Contains("::"))
-                key = "::" + key;
-
-            var items = key.Split("::");
-
-            if (key.StartsWith("::") && items.Length == 2)
-                return new TranslatedKeyLabel(string.Empty, string.Empty, items[1], items[1]);
-
-            if (items.Length == 4)
-                return new TranslatedKeyLabel(items[0], items[1], items[2], items[3]);
-
-            if (items.Length == 3)
-            {
-
-                return new TranslatedKeyLabel(items[0], items[1], items[2], string.Empty);
-
-            }
-
-            throw new InvalidTranslationKeyFormatException(key);
-
+            return TranslatedKeyLabel.Parse(key) ?? TranslatedKeyLabel.EmptyKey;
         }
-
-        public static bool IsValidKey(string p)
-        {
-            return p.Contains("::");
-        }
-
+   
         public override bool Equals(object? obj)
         {
 
@@ -87,27 +90,117 @@ namespace Bb.WebClient.UIComponents
         }
 
 
-        public static IEnumerable<TranslatedKeyLabel> GetFrom(MemberInfo info)
+        public static TranslatedKeyLabel? Parse(string key)
         {
 
-            var items = info.GetCustomAttributes<TranslationKeyAttribute>()
-                .ToList();
+            if (string.IsNullOrEmpty(key))
+                return null;
 
-            foreach (TranslationKeyAttribute attribute in items)
-                yield return (TranslatedKeyLabel)attribute.Key;
+            if (key.Contains("::"))
+            {
+
+            }
+
+            TranslatedKeyLabel keyLabel = new TranslatedKeyLabel();
+            bool t = false;
+            var lexer = new Lexer(key);
+
+            while (lexer.Next())
+            {
+
+                string subKey = lexer.SubKey;
+
+                var index2 = subKey.IndexOf(':');
+                if (index2 > -1)
+                {
+
+                    t = true;
+                    var name = subKey.Substring(0, index2).ToLower();
+                    var value = subKey.Substring(index2 + 1).Trim();
+
+                    switch (name)
+                    {
+                     
+                        case "c":
+                            keyLabel.Path = value;
+                            break;
+                        case "k":
+                            keyLabel.Key = value;
+                            break;
+                        case "l":
+                            keyLabel.Culture = CultureInfo.GetCultureInfo(value);
+                            break;
+                        case "d":
+                            keyLabel.DefaultDisplay = value;
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+
+            }
+
+            if (t)
+            {
+                if (string.IsNullOrEmpty(keyLabel.Key) && !string.IsNullOrEmpty(keyLabel.DefaultDisplay))
+                    keyLabel.Key = keyLabel.DefaultDisplay;
+                return keyLabel;
+            }
+
+            if (string.IsNullOrEmpty(keyLabel.DefaultDisplay))
+            {
+                keyLabel.DefaultDisplay = key;
+                keyLabel.IsNotValidKey = true;
+            }
+
+            return keyLabel;
 
         }
 
+        private class Lexer
+        {
+
+            public Lexer(string key)
+            {
+                this._payload = key;
+            }
+
+            public bool Next()
+            {
+
+                var n = _payload.IndexOf(',', index);
+                if (n > -1)
+                {
+                    SubKey = _payload.Substring(index, n - index).Trim();
+                    index = n + 1;
+                    return true;
+                }
+                else if (index > 0 && _payload.IndexOf(':', index) > -1)
+                {
+                    SubKey = _payload.Substring(index, _payload.Length - index).Trim();
+                    index = _payload.Length;
+                    return true;
+                }
+
+                return false;
+
+            }
+
+            private string _payload;
+            int index = 0;
+
+
+            public string SubKey { get; private set; }
+
+        }
 
     }
 
 }
 
+
 /*
- 
     ,,,d:Default value
- 
-    a:application, c:context, k:key, d:default value
-
-
+    p:path, k:key, l:en-us, d:default value
  */

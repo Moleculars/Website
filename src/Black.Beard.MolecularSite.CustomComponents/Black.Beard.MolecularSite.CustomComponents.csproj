@@ -12,7 +12,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="PropertyGridComponent\ComponentArea.razor.cs" />
+	  <Compile Remove="PropertyGridComponent\ComponentFieldTree.razor.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="PropertyGridComponent\ComponentArea.razor" />
 	  <Content Remove="PropertyGridComponent\ComponentFieldBase1.razor" />
+	  <Content Remove="PropertyGridComponent\ComponentFieldTree.razor" />
 	</ItemGroup>
 
 	<ItemGroup>

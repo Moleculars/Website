@@ -7,7 +7,7 @@ namespace Bb.WebClient.UIComponents
 
         public ItemEnumerable()
         {
-            Label = string.Empty;
+            Label = TranslatedKeyLabel.EmptyKey;
             Subs = new List<ItemEnumerable>();
             Keys = new Dictionary<string, string>();
         }

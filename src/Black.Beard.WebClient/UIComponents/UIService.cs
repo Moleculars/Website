@@ -77,7 +77,7 @@ namespace Bb.WebClient.UIComponents
             {
                 listBlock.Add(block = new UIComponentMenu(guid)
                 {
-                    Display = label ?? string.Empty,
+                    Display = label,
                     Type = UIComponent.Types.Menu,
                 });
             }

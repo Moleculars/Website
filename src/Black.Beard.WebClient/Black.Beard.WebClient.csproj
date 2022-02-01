@@ -11,8 +11,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Attributes\DisplayTextAreaAttribute.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.21" />
 	  <PackageReference Include="Black.Beard.Helpers.ContentLoaders" Version="1.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>

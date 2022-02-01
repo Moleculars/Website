@@ -4,19 +4,19 @@
 
 
 <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-    <MudButton ButtonType="ButtonType.Button" OnClick="Cancel">@TranslateService.Translate("::Cancel")</MudButton>
-    <MudButton ButtonType="ButtonType.Button" OnClick="Save">@TranslateService.Translate("::Save")</MudButton>
+    <MudButton ButtonType="ButtonType.Button" OnClick="Cancel">@TranslateService.Translate("p:ConfigurationComponentView.razor,l:en-us,k:Cancel,d:Cancel")</MudButton>
+    <MudButton ButtonType="ButtonType.Button" OnClick="Save">@TranslateService.Translate("p:ConfigurationComponentView.razor,l:en-us,k:Save,d:Save")</MudButton>
 </MudButtonGroup>
 
 <MudGrid Spacing="2">
 
-    <MudItem xs=12 sm=6>
+    <MudItem xs="6">
 
         <MudPaper>
 
             <MudList Clickable="true">
 
-                <MudListSubheader>@TranslateService.Translate("Context::Title::Configurations")</MudListSubheader>
+                <MudListSubheader>@TranslateService.Translate("p:ConfigurationComponentView.razor,l:en-us,k:Cancel,d:Configurations")</MudListSubheader>
 
                 @if (Configurations != null)
                     @foreach (var assembly in Configurations)
@@ -42,7 +42,7 @@
 
     </MudItem>
 
-    <MudItem xs=12 sm=6>
+    <MudItem xs="6">
 
         <PropertyGrid SelectedObject="@CurrentItem" />
 

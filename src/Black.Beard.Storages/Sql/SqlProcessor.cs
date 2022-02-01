@@ -7,9 +7,31 @@ namespace Bb.Sql
     public class SqlProcessor
     {
 
-        public SqlProcessor(string connexionString, DbProviderFactory factory)
+
+        public static SqlProcessor GetSqlProcessor(ConnectionStringSetting connectionStringSetting)
+        {
+            return new SqlProcessor(connectionStringSetting);
+        }
+        public static SqlProcessor GetSqlProcessor(string connexionString, DbProviderFactory factory)
+        {
+            return new SqlProcessor(connexionString, factory);
+        }
+
+
+        protected SqlProcessor(ConnectionStringSetting connectionStringSetting)
+            : this(connectionStringSetting.ConnectionString, connectionStringSetting.GetProvider())
         {
 
+        }
+
+        protected SqlProcessor(ConnectionSettings settings, string connectionStringName) 
+            : this(settings.ConnectionStringSettings.GetConnectionString(connectionStringName))
+        {
+
+        }
+
+        protected SqlProcessor(string connexionString, DbProviderFactory factory)
+        {
             this._connexionString = connexionString ?? throw new NullReferenceException(nameof(connexionString));
             this._factory = factory ?? throw new NullReferenceException(nameof(factory));
         }
@@ -19,6 +41,9 @@ namespace Bb.Sql
             this._builder = builder ?? throw new NullReferenceException(nameof(builder));
             this._factory = factory ?? throw new NullReferenceException(nameof(factory));
         }
+
+
+
 
         public SqlProcessorResult ExecuteNonQuery(string commandText, params DbParameter[] parameters)
         {

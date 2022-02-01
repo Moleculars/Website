@@ -8,6 +8,7 @@ using System.Globalization;
 namespace Bb.MolecularSite.PropertyGridComponent
 {
 
+
     public partial class ComponentFieldBaseList : ComponentFieldBase, INotifyCollectionChanged
     {
 
@@ -106,7 +107,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public object CurrentItem { get; set; }
 
-        public ObjectDescriptor Descriptor { get; private set; }
+        public ObjectDescriptor Descriptor { get; set; }
 
         private object _value;
 

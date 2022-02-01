@@ -5,18 +5,21 @@ using System.Globalization;
 namespace Bb.WebClient.UIComponents
 {
 
-
     [ExposeClass(ConstantsCore.Initialization, ExposedType = typeof(TranslateService), LifeCycle = IocScopeEnum.Singleton)]
     public class TranslateService
     {
 
-        public TranslateService()
+
+        public TranslateService(ITranslateServiceDataAccess dataAccess)
         {
+
+            this._dataAccess = dataAccess;
             _availableCultures = new CultureInfo[]
             {
                 CultureInfo.GetCultureInfo("fr-FR"),
                 CultureInfo.GetCultureInfo("en-US"),
             };
+
         }
                
 
@@ -35,6 +38,7 @@ namespace Bb.WebClient.UIComponents
         public CultureInfo[] AvailableCultures { get { return _availableCultures; } }
 
 
+        private readonly ITranslateServiceDataAccess _dataAccess;
         private CultureInfo[] _availableCultures;
 
 

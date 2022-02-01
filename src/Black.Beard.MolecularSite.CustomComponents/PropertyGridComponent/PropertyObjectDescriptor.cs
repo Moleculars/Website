@@ -61,15 +61,16 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public PropertyObjectDescriptor(PropertyDescriptor property, ObjectDescriptor parent)
         {
+
             this.Parameters = new Dictionary<string, object>();
             this.Parameters.Add("Property", this);
 
             this.Parent = parent;
             this.PropertyDescriptor = property;
 
-            this.Display = property.DisplayName ?? property.Name;
+            this.Display = property.DisplayName.GetTranslation(property.Name);
             this.Description = property.Description;
-            this.Category = property.Category;
+            this.Category = property.Category.GetTranslation();
 
             this.Browsable = true;
             this.ReadOnly = false;
@@ -89,7 +90,6 @@ namespace Bb.MolecularSite.PropertyGridComponent
             else
                 this.SubType = typeof(void);
 
-
             if (_strategies.TryGetValue(this.Type, out StrategyEditor? strategy))
             {
                 this.EditorType = strategy.ComponentView;
@@ -104,19 +104,13 @@ namespace Bb.MolecularSite.PropertyGridComponent
             }
 
             else if (typeof(IEnumerable).IsAssignableFrom(this.Type))
-            {
-
                 foreach (var item in this.Type.GetInterfaces())
-                {
                     if (item.IsGenericType && item.GetGenericTypeDefinition() is Type type && type == typeof(ICollection<>))
                     {
-                        this.SubType = this.Type.GetGenericArguments()[0];
+                        this.SubType = item.GetGenericArguments()[0];
                         this.KingView = PropertyKingView.List;
                         this.EditorType = typeof(ComponentList);
                     }
-                }
-
-            }
 
 
         }
@@ -157,6 +151,10 @@ namespace Bb.MolecularSite.PropertyGridComponent
                     switch (attribute)
                     {
 
+                        //case DisplayTextAreaAttribute:
+                        //    this.EditorType = typeof(ComponentArea);
+                        //    break;
+
                         case ListProviderAttribute listProviderAttribute:
                             this.ListProvider = listProviderAttribute.EnumerationResolver;
                             break;
@@ -170,7 +168,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                         case DescriptionAttribute:
                             break;
 
-                        case System.ComponentModel.PasswordPropertyTextAttribute passwordPropertyText:
+                        case PasswordPropertyTextAttribute passwordPropertyText:
                             IsPassword = passwordPropertyText.Password;
                             break;
 
@@ -263,7 +261,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                     var label = this.Parent.TranslateService.Translate(this.Display);
                     var message = item.FormatErrorMessage(label);
 
-                    if (TranslatedKeyLabel.IsValidKey(item.FormatErrorMessage(string.Empty)))
+                    if (item.FormatErrorMessage(string.Empty).IsValidKey())
                         messages.Add(this.Parent.TranslateService.Translate(message));
                     else
                         messages.Add(message);
@@ -405,7 +403,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
                 var n = item.ToString();
                 var o = fields.Where(f => f.Name == n).First();
-                TranslatedKeyLabel label = TranslatedKeyLabel.GetFrom(o).FirstOrDefault() ?? n;
+                TranslatedKeyLabel label = o.GetFrom().FirstOrDefault() ?? n;
 
                 yield return new ListItem()
                 {
