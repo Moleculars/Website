@@ -1,4 +1,5 @@
-﻿using Bb.WebClient.UIComponents;
+﻿using Bb.ComponentModel.Translations;
+using Bb.WebClient.UIComponents;
 using Bb.WebClient.UIComponents.Glyphs;
 using Microsoft.AspNetCore.Components.Routing;
 using System.Globalization;
@@ -11,7 +12,7 @@ namespace Bb.WebHost.UIComponents
     public class MenuConverter : IMenuConverter
     {
 
-        public MenuConverter(CultureInfo culture, TranslateService translateService)
+        public MenuConverter(CultureInfo culture, ITranslateService translateService)
         {
             this._culture = culture;
             this._translateService = translateService;
@@ -65,7 +66,7 @@ namespace Bb.WebHost.UIComponents
         }
 
         private CultureInfo _culture;
-        private readonly TranslateService _translateService;
+        private readonly ITranslateService _translateService;
 
     }
 

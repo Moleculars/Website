@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Routing;
+﻿using Bb.ComponentModel.Translations;
+using Microsoft.AspNetCore.Components.Routing;
 using System;
 
 namespace Bb.WebClient.UIComponents

@@ -1,31 +1,39 @@
-﻿using System.Data;
+﻿using Bb.Storages.ConfigurationProviders.SqlServer;
+using Microsoft.Extensions.Primitives;
+using System.Data;
 using System.Data.Common;
 
 namespace Bb.Sql
 {
 
-    public class SqlProcessor
+    public class SqlProcessor : IDisposable
     {
 
 
         public static SqlProcessor GetSqlProcessor(ConnectionStringSetting connectionStringSetting)
         {
-            return new SqlProcessor(connectionStringSetting);
+            return new SqlProcessor(connectionStringSetting ?? throw new NullReferenceException(nameof(connectionStringSetting)));
         }
+
         public static SqlProcessor GetSqlProcessor(string connexionString, DbProviderFactory factory)
         {
             return new SqlProcessor(connexionString, factory);
         }
 
+        public static SqlProcessor GetSqlProcessor(ConnectionSettings settings, string connectionStringName)
+        {
+            return new SqlProcessor(settings, connectionStringName);
+        }
+
 
         protected SqlProcessor(ConnectionStringSetting connectionStringSetting)
-            : this(connectionStringSetting.ConnectionString, connectionStringSetting.GetProvider())
+            : this(connectionStringSetting?.ConnectionString, connectionStringSetting.GetProvider())
         {
 
         }
 
-        protected SqlProcessor(ConnectionSettings settings, string connectionStringName) 
-            : this(settings.ConnectionStringSettings.GetConnectionString(connectionStringName))
+        protected SqlProcessor(ConnectionSettings settings, string connectionStringName)
+            : this(settings.ConnectionStringSettings?.GetConnectionString(connectionStringName))
         {
 
         }
@@ -212,6 +220,58 @@ namespace Bb.Sql
 
         }
 
+        public DbConnection GetConnexion()
+        {
+
+            if (_factory == null)
+                throw new NullReferenceException("no connexion string initialized");
+
+            var cnx = _factory.CreateConnection();
+
+            cnx.ConnectionString = this._connexionString ?? this._builder?.ConnectionString ?? throw new NullReferenceException("no connexion string initialized");
+            cnx.Open();
+
+            return cnx;
+
+        }
+
+        public ISqlServerWatcher? SqlServerWatcher { get; private set; }
+
+        public SqlProcessor InitializeWatcher(int refreshInterval, Action action)
+        {
+            SqlServerWatcher = new SqlServerPeriodicalWatcher(TimeSpan.FromSeconds(refreshInterval))
+                .Subscribe(action);
+            return this;
+
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    SqlServerWatcher?.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: substituer le finaliseur uniquement si 'Dispose(bool disposing)' a du code pour libérer les ressources non managées
+        // ~SqlProcessor()
+        // {
+        //     // Ne changez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Ne changez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         private DbCommand Getcommand(DbConnection cnx, string commandText, DbParameter[] parameters)
         {
 
@@ -228,24 +288,11 @@ namespace Bb.Sql
 
         }
 
-        public DbConnection GetConnexion()
-        {
-
-            if (_factory == null)
-                throw new NullReferenceException("no connexion string initialized");
-
-            var cnx = _factory.CreateConnection();
-
-            cnx.ConnectionString = this._connexionString ?? this._builder?.ConnectionString ?? throw new NullReferenceException("no connexion string initialized");
-            cnx.Open();
-
-            return cnx;
-
-        }
-
         private DbConnectionStringBuilder? _builder;
         private readonly DbProviderFactory? _factory;
         private readonly string? _connexionString;
+        
+        private bool disposedValue;
 
     }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Primitives;
 
-namespace Bb.Storages.ConfigurationProviders.SqlServer
+namespace Bb.Sql
 {
 
     public interface ISqlServerWatcher : IDisposable

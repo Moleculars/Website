@@ -1,19 +1,22 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.ComponentModel.Translations;
 using System.Globalization;
 
-namespace Bb.WebClient.UIComponents
+namespace Bb.Translations.Services
 {
 
-    [ExposeClass(ConstantsCore.Initialization, ExposedType = typeof(TranslateService), LifeCycle = IocScopeEnum.Singleton)]
-    public class TranslateService
+
+    [ExposeClass(ConstantsCore.Initialization, ExposedType = typeof(ITranslateService), LifeCycle = IocScopeEnum.Singleton)]
+    public class TranslateService : ITranslateService
     {
 
 
-        public TranslateService(ITranslateServiceDataAccess dataAccess)
+        public TranslateService(TranslateServiceDataAccess dataAccess)
         {
 
-            this._dataAccess = dataAccess;
+            DataAccess = dataAccess;
+
             _availableCultures = new CultureInfo[]
             {
                 CultureInfo.GetCultureInfo("fr-FR"),
@@ -21,7 +24,10 @@ namespace Bb.WebClient.UIComponents
             };
 
         }
-               
+     
+
+        public TranslateServiceDataAccess DataAccess { get;  }
+
 
         public string Translate(TranslatedKeyLabel key)
         {
@@ -37,8 +43,6 @@ namespace Bb.WebClient.UIComponents
 
         public CultureInfo[] AvailableCultures { get { return _availableCultures; } }
 
-
-        private readonly ITranslateServiceDataAccess _dataAccess;
         private CultureInfo[] _availableCultures;
 
 

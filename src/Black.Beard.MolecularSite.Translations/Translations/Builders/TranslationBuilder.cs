@@ -1,9 +1,11 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.ComponentModel.Translations;
 using Bb.Configurations;
+using Bb.Translations.Services;
 using Bb.WebClient.ApplicationBuilders;
 using Bb.WebClient.UIComponents;
-
+using System.Data.Common;
 
 namespace Bb.Translations.Builders
 {
@@ -20,13 +22,14 @@ namespace Bb.Translations.Builders
 
         public void Initialize(IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddSingleton(typeof(ServiceConfigurationMapper));
+            //services.AddSingleton(typeof(ITranslateService));
             //services.AddSingleton(typeof(ServiceConfigurationRepository));
         }
 
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
 
         }
 

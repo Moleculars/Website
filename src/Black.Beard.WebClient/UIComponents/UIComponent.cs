@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Bb.ComponentModel.Translations;
+using System.Diagnostics;
 
 namespace Bb.WebClient.UIComponents
 {

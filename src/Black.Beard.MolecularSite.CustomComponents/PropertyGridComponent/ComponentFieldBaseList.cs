@@ -39,7 +39,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                         Property.Value = _value;
                     }
 
-                    this.Descriptor = new ObjectDescriptor(null, this.Property.SubType, this.Property.Parent.TranslateService);
+                    this.Descriptor = new ObjectDescriptor(null, this.Property.SubType, this.Property.Parent.TranslateService, this.Property.Parent.ServiceProvider);
                     this.Descriptor.Analyze();
                 }
                 catch (Exception ex)

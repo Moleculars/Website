@@ -1,4 +1,5 @@
-﻿using Bb.WebClient.UIComponents;
+﻿using Bb.ComponentModel.Translations;
+using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
@@ -19,7 +20,7 @@ namespace MolecularSite.Shared
         private UIService? UIService { get; set; }
 
         [Inject]
-        private TranslateService? translateService { get; set; }
+        private ITranslateService? translateService { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

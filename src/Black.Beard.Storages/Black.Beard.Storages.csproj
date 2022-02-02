@@ -8,15 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.21" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.22" />
     <PackageReference Include="Black.Beard.Helpers.ContentLoaders" Version="1.0.5" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Black.Beard.Configurations\Black.Beard.Configurations.csproj" />
-    <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
   </ItemGroup>
 
 </Project>

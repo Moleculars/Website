@@ -1,4 +1,5 @@
-﻿using Bb.WebClient.ApplicationBuilders;
+﻿using Bb.Storages.ConfigurationProviders.SqlServer;
+using Bb.WebClient.ApplicationBuilders;
 
 
 namespace Bb.WebClient.Startings
@@ -17,7 +18,7 @@ namespace Bb.WebClient.Startings
             ExposedTypes = new ExposedTypeRepository();
             Builders = new List<Type>();
             InjectBuilders = new TypesToInject();
-            Configurations = new List<Type>();
+            Configurations = new HashSet<Type>();
             InstancesBuilders = new();
         }
 
@@ -37,13 +38,15 @@ namespace Bb.WebClient.Startings
 
         public List<Type> Builders { get; }
 
-        public List<Type> Configurations { get; }
+        public HashSet<Type> Configurations { get; }
 
         public TypesToInject InjectBuilders { get; }
         
         public InitialConfiguration? InitialConfiguration { get; set; }
 
         public List<IApplicationBuilderInitializer> InstancesBuilders { get; }
+
+        public BaseConfiguration InitialConnection { get; set; }
 
     }
 

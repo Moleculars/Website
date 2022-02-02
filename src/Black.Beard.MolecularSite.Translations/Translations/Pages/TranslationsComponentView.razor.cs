@@ -1,5 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.ComponentModel.Translations;
 using Bb.Configurations;
 using Bb.MolecularSite.PropertyGridComponent;
 using Bb.WebClient.UIComponents;

@@ -11,6 +11,8 @@ using System.Linq;
 using Bb.WebClient.Startings;
 using Bb.WebClient.ApplicationBuilders;
 using Bb.Configurations;
+using Bb.Storages.ConfigurationProviders.SqlServer;
+using Bb.Sql;
 
 namespace Bb.WebHost.Startings
 {
@@ -201,21 +203,29 @@ namespace Bb.WebHost.Startings
 
             var types = ExposedTypes.Instance;
 
+            // Inject the first sql connection
+            self.InjectBuilders.Add(IocScopeEnum.Singleton, typeof(InitialeConnectionStringSetting), self.InitialConnection.GetConnection());
+            self.InjectBuilders.Add(IocScopeEnum.Singleton, typeof(BaseConfiguration), self.InitialConnection);
+
+
             var _allconfigurations = types.GetTypes(ConstantsCore.Configuration).ToList();
             foreach (var item1 in _allconfigurations)
                 foreach (var item2 in item1.Value)
                 {
 
-                    if (item1.Key.GetConstructor(new Type[] { }) != null)
-                        self.InjectBuilders.Add(item2.LifeCycle, item2.ExposedType ?? item1.Key, (s) =>
-                        {
-                            var mapper = s.GetService(typeof(ConfigurationSerializer)) as ConfigurationSerializer;
-                            return mapper.Get<object>(item1.Key);
-                        });
-                    else
-                        self.InjectBuilders.Add(item2.LifeCycle, item2.ExposedType ?? item1.Key, item1.Key);
-
-                    self.Configurations.Add(item2.ExposedType ?? item1.Key);
+                    var t = (item2.ExposedType ?? item1.Key);
+                    if (self.Configurations.Add(t))
+                    {
+                        if (item1.Key.GetConstructor(new Type[] { }) != null)
+                            self.InjectBuilders.Add(item2.LifeCycle, t, (s) =>
+                            {
+                                var mapper = s.GetService(typeof(ConfigurationSerializer)) as ConfigurationSerializer;
+                                return mapper.Get<object>(item1.Key);
+                            });
+                        else
+                            self.InjectBuilders.Add(item2.LifeCycle, t, item1.Key);
+                    }
+                    
                 }
 
             self.InjectBuilders.Add(IocScopeEnum.Singleton, typeof(ExposedTypeRepository), self.ExposedTypes);
@@ -279,13 +289,31 @@ namespace Bb.WebHost.Startings
 
             self.InitialConfiguration = _configuration;
 
+
+            var cnxString = Environment.GetEnvironmentVariable(connectionString);
+
+            if (string.IsNullOrEmpty(cnxString))
+            {
+                Trace.WriteLine($"no connection string specified in environment variable.Please if you want to use a sqlserver provider, specify a environement variable '{connectionString}'");
+            }
+
+
+            self.InitialConnection = new BaseConfiguration(new Sql.InitialeConnectionStringSetting()
+            {
+                Name = "InitialConnexion",
+                ConnectionString = cnxString,
+                ProviderName = "SqlClientFactory"
+            });
+
+
             // Add the first configuration that not exposed by attribute
             self.ExposedTypes.Add(
                 new ExposedType(typeof(InitialConfiguration), ConstantsCore.Configuration, srv => self.InitialConfiguration)
                 );
 
 
-            
+
+
             //System.Configuration.ConnectionStringsSection
 
             // var conf = new ConfigurationXmlSerializer<System.Configuration.ConnectionStringsSection>();
@@ -294,6 +322,7 @@ namespace Bb.WebHost.Startings
 
         }
 
+        private const string connectionString = "configConnexionString";
 
     }
 

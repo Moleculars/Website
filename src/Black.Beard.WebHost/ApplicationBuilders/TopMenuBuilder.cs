@@ -1,5 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.ComponentModel.Translations;
 using Bb.WebClient.UIComponents;
 using Bb.WebClient.UIComponents.Glyphs;
 using System;
@@ -11,7 +12,7 @@ namespace Bb.WebHost.ApplicationBuilders
     public class TopMenuBuilder : IInjectBuilder<UIService>
     {
 
-        public TopMenuBuilder(TranslateService translateService)
+        public TopMenuBuilder(ITranslateService translateService)
         {
             _translateService = translateService;
         }
@@ -54,7 +55,7 @@ namespace Bb.WebHost.ApplicationBuilders
             return true;
         }
 
-        private readonly TranslateService _translateService;
+        private readonly ITranslateService _translateService;
 
 
     }

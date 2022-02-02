@@ -15,41 +15,64 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
         public SqlServerConfigurationProvider(SqlServerConfigurationDataAccess dataAccess)
         {
-
             _dataAccess = dataAccess;
-
-            if (_dataAccess.SqlServerWatcher != null)
-                _changeTokenRegistration = ChangeToken.OnChange(() => _dataAccess.SqlServerWatcher.Watch(), Load);
-
         }
 
 
         public override void Load()
         {
 
-            var datas = _dataAccess.LoadConfigurations();
+            if (Data == null)
+                Data = new Dictionary<string, string>();
 
-            var dic = new Dictionary<string, string>();
-            foreach (var item in datas.Values)
-                dic.Add(item.SectionName, item.Value);
+            lock (_lock)
+            {
+                var datas = _dataAccess.LoadConfigurations();
 
-            Data = dic;
+                foreach (var item in datas.Values)
+                    if (Data.TryGetValue(item.SectionName, out string value))
+                        Data[item.SectionName] = item.Value;
+                    else
+                        Data.Add(item.SectionName, item.Value);
+            }
 
         }
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+
+                if (disposing)
+                {
+                    _dataAccess.Dispose();
+                }
+
+                // TODO: libérer les ressources non managées (objets non managés) et substituer le finaliseur
+                // TODO: affecter aux grands champs une valeur null
+                disposedValue = true;
+
+            }
+        }
+
+        // // TODO: substituer le finaliseur uniquement si 'Dispose(bool disposing)' a du code pour libérer les ressources non managées
+        // ~SqlServerConfigurationProvider()
+        // {
+        //     // Ne changez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'
+        //     Dispose(disposing: false);
+        // }
 
         public void Dispose()
         {
-            _changeTokenRegistration?.Dispose();
-            _dataAccess.SqlServerWatcher?.Dispose();
+            // Ne changez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
-
-
         private readonly SqlServerConfigurationDataAccess _dataAccess;
-        private readonly IDisposable _changeTokenRegistration;
-
-
-
+        private bool disposedValue;
+        private volatile object _lock = new object();
 
     }
 }

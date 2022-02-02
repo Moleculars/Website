@@ -11,21 +11,24 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
     {
 
 
-        public SqlServerConfigurationSource(SqlServerConfigurationDataAccess dataAccess)
+        public SqlServerConfigurationSource(SqlServerConfigurationDataAccess dataAccess, int refreshInterval)
         {
             this.DataAccess = dataAccess;
+            this._refreshInterval = refreshInterval;
         }
 
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new SqlServerConfigurationProvider(this.DataAccess);
+            var result = new SqlServerConfigurationProvider(this.DataAccess);
+            this.DataAccess.Sql.InitializeWatcher(this._refreshInterval, result.Load);
+            return result;
         }
 
 
         public SqlServerConfigurationDataAccess DataAccess { get; set; }
 
-
+        private readonly int _refreshInterval;
     }
 
 

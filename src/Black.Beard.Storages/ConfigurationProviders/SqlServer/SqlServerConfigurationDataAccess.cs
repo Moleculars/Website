@@ -6,33 +6,22 @@ using System.Data.Common;
 namespace Bb.Storages.ConfigurationProviders.SqlServer
 {
 
-
-
     public class SqlServerConfigurationDataAccess : IDisposable
     {
 
-        public SqlServerConfigurationDataAccess(ConnectionSettings settings, string connectionStringName, int? refreshInterval, string tableName = "settings")
+        public SqlServerConfigurationDataAccess(BaseConfiguration connection)
+        {
+            this._tableName = connection.TableName;
+            var cnx = connection.GetConnection() ?? throw new NullReferenceException(nameof(connection));
+            Sql = SqlProcessor.GetSqlProcessor(cnx);
+        }
+
+        public SqlServerConfigurationDataAccess(string SettingConnectionString, string tableName = "settings")
         {
 
             this._tableName = tableName;
-            _sql =  SqlProcessor.GetSqlProcessor(settings.ConnectionStringSettings.GetConnectionString(connectionStringName));
-
-            if (refreshInterval.HasValue)
-                SqlServerWatcher = new SqlServerPeriodicalWatcher(TimeSpan.FromSeconds(refreshInterval.Value));
-
+            Sql = SqlProcessor.GetSqlProcessor(SettingConnectionString, SqlClientFactory.Instance);
         }
-
-        public SqlServerConfigurationDataAccess(string SettingConnectionString, int? refreshInterval, string tableName = "settings")
-        {
-            this._tableName = tableName;
-            _sql = SqlProcessor.GetSqlProcessor(SettingConnectionString, SqlClientFactory.Instance);
-
-            if (refreshInterval.HasValue)
-                SqlServerWatcher = new SqlServerPeriodicalWatcher(TimeSpan.FromSeconds(refreshInterval.Value));
-
-        }
-
-        public ISqlServerWatcher? SqlServerWatcher { get; }
 
         public DateTimeOffset? LastUpdate { get; private set; }
 
@@ -42,12 +31,9 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
             {
                 if (disposing)
                 {
-                    SqlServerWatcher?.Dispose();
-                    // TODO: supprimer l'état managé (objets managés)
+                    Sql?.Dispose();
                 }
 
-                // TODO: libérer les ressources non managées (objets non managés) et substituer le finaliseur
-                // TODO: affecter aux grands champs une valeur null
                 disposedValue = true;
             }
         }
@@ -81,13 +67,13 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         public bool InsertConfiguration(ConfigurationSettings settings)
         {
 
-            var results = _sql.ExecuteNonQuery(
+            var results = Sql.ExecuteNonQuery(
                    GetSql(_sql_Insert),
-                    _sql.GetParameter("sectionName", settings.SectionName),
-                    _sql.GetParameter("context", settings.Context),
-                    _sql.GetParameter("kind", settings.Kind),
-                    _sql.GetParameter("version", 1),
-                    _sql.GetParameter("value", settings.Value)
+                    Sql.GetParameter("sectionName", settings.SectionName),
+                    Sql.GetParameter("context", settings.Context),
+                    Sql.GetParameter("kind", settings.Kind),
+                    Sql.GetParameter("version", 1),
+                    Sql.GetParameter("value", settings.Value)
                    );
 
             return results.InpactedObject > 0;
@@ -98,11 +84,11 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         public bool UpdateConfiguration(ConfigurationSettings settings)
         {
 
-            var results = _sql.ExecuteNonQuery(
+            var results = Sql.ExecuteNonQuery(
                 GetSql(_sql_Update),
-                _sql.GetParameter("sectionName", settings.SectionName),
-                _sql.GetParameter("value", settings.Value),
-                _sql.GetParameter("version", settings.Version)
+                Sql.GetParameter("sectionName", settings.SectionName),
+                Sql.GetParameter("value", settings.Value),
+                Sql.GetParameter("version", settings.Version)
                 );
 
             if (results.InpactedObject > 0)
@@ -129,9 +115,9 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         {
 
             var queryString = GetSql(_sql_selectAll) + "WHERE [SectionName] = @sectionName";
-            var argument = _sql.GetParameter("sectionName", sectionName);
+            var argument = Sql.GetParameter("sectionName", sectionName);
 
-            foreach (var item in _sql.Read(queryString, argument))
+            foreach (var item in Sql.Read(queryString, argument))
             {
 
                 var row = new ConfigurationSettings()
@@ -167,10 +153,10 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
             if (LastUpdate.HasValue)
             {
                 query += " WHERE [LastUpdate] = @lastUpdate";
-                parameter = _sql.GetParameter("lastUpdate", LastUpdate.Value);
+                parameter = Sql.GetParameter("lastUpdate", LastUpdate.Value);
             }
 
-            foreach (var item in _sql.Read(query, parameter))
+            foreach (var item in Sql.Read(query, parameter))
             {
 
                 var row = new ConfigurationSettings()
@@ -195,7 +181,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
         public bool CreateTables()
         {
-            var results = _sql.ExecuteNonQuery(GetSql(_sql_create));
+            var results = Sql.ExecuteNonQuery(GetSql(_sql_create));
             return results.Success;
         }
 
@@ -213,7 +199,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         }
 
         private readonly string _tableName;
-        private readonly SqlProcessor _sql;
+        public SqlProcessor Sql { get; }
 
         private string _sql_Insert = "INSERT INTO [dbo].[%TableName%] ([SectionName], [Context], [Kind], [Version], [Value], [CreationDtm], [LastUpdate]) VALUES (@sectionName, @context, @kind, @version, @value, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())";
         private string _sql_Update = "UPDATE [dbo].[%TableName%] SET [Value] = @value, [LastUpdate] = SYSDATETIMEOFFSET(), [Version] = @version + 1  WHERE [SectionName]=@sectionName AND [Version] = @version";

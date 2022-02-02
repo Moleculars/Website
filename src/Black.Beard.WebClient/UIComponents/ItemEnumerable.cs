@@ -1,7 +1,10 @@
 ﻿
+using Bb.ComponentModel.Translations;
+
 namespace Bb.WebClient.UIComponents
 {
 
+    [System.Diagnostics.DebuggerDisplay("{Label}")]
     public class ItemEnumerable
     {
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Routing;
+﻿using Bb.ComponentModel.Translations;
+using Microsoft.AspNetCore.Components.Routing;
 using System.Globalization;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace Bb.WebClient.UIComponents
     public class MenuConverter : IMenuConverter
     {
 
-        public MenuConverter(TranslateService translateService)
+        public MenuConverter(ITranslateService translateService)
         {
             this._translateService = translateService;
         }
@@ -61,7 +62,7 @@ namespace Bb.WebClient.UIComponents
 
         }
 
-        private readonly TranslateService _translateService;
+        private readonly ITranslateService _translateService;
 
     }
 

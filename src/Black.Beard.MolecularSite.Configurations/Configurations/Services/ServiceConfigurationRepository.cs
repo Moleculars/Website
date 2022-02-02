@@ -5,6 +5,8 @@ using Bb.ComponentModel.Attributes;
 using Bb.ComponentModel;
 using System.Reflection;
 using Bb.Storages.ConfigurationProviders.SqlServer;
+using Bb.ComponentModel.DataAnnotations;
+using Bb.ComponentModel.Translations;
 
 namespace Bb.Configurations.services
 {

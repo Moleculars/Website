@@ -11,16 +11,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Attributes\DisplayTextAreaAttribute.cs" />
+	  <Compile Remove="Attributes\**" />
+	  <Content Remove="Attributes\**" />
+	  <EmbeddedResource Remove="Attributes\**" />
+	  <None Remove="Attributes\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.21" />
+	  <Compile Remove="UIComponents\TranslatedKeyLabel.cs" />
+	  <Compile Remove="UIComponents\TranslatedKeyLabelExtension.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.22" />
 	  <PackageReference Include="Black.Beard.Helpers.ContentLoaders" Version="1.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Services\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Black.Beard.Storages\Black.Beard.Storages.csproj" />
 	</ItemGroup>
 
 </Project>

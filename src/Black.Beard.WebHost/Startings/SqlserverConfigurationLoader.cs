@@ -16,17 +16,9 @@ namespace Bb.WebHost.Startings
 
         public void Load(InitializationLoader builder)
         {
-
-            var cnxString = Environment.GetEnvironmentVariable(connectionString);
-            if (string.IsNullOrEmpty(cnxString))
-                Trace.WriteLine($"no connection string specified in environment variable.Please if you want to use a sqlserver provider, specify a environement variable '{connectionString}'");
-            else
-            {
-                var provider = SqlServerConfigurationBuilderExtensions.GetSqlServerProvider(cnxString, 30);
-                builder.ConfigurationBuilder.Add(provider);
-                builder.Builder.Services.Add(ServiceDescriptor.Singleton(provider.DataAccess));
-            }
-
+            var provider = SqlServerConfigurationBuilderExtensions.GetSqlServerProvider(builder.InitialConnection);
+            builder.ConfigurationBuilder.Add(provider);
+            builder.Builder.Services.Add(ServiceDescriptor.Singleton(provider.DataAccess));
         }
 
 

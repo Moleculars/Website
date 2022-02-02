@@ -1,4 +1,5 @@
-﻿using Bb.Attributes;
+﻿using Bb.ComponentModel.DataAnnotations;
+using Bb.ComponentModel.Translations;
 using Bb.WebClient.UIComponents;
 using System.Collections;
 using System.ComponentModel;
@@ -157,6 +158,8 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
                         case ListProviderAttribute listProviderAttribute:
                             this.ListProvider = listProviderAttribute.EnumerationResolver;
+                            this.EditorType = typeof(ComponentEnumeration);
+                            this.KingView = PropertyKingView.Enumeration;
                             break;
 
                         case EditorAttribute editor:
@@ -230,7 +233,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                                 System.Diagnostics.Debugger.Break();
                             break;
 
-                        case Bb.ComponentModel.Attributes.TranslationKeyAttribute translationKey:
+                        case Bb.ComponentModel.DataAnnotations.TranslationKeyAttribute translationKey:
                             break;
 
                         default:
@@ -389,7 +392,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
         public PropertyDescriptor Property { get; set; }
 
         
-        public TranslateService TranslateService { get; set; }
+        public ITranslateService TranslateService { get; set; }
 
 
         public IEnumerable<ListItem> GetItems()

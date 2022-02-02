@@ -11,7 +11,6 @@ namespace Bb.Attributes
 
         TranslateService TranslateService { get; set; }
 
-
         IEnumerable<ListItem> GetItems();
 
     }

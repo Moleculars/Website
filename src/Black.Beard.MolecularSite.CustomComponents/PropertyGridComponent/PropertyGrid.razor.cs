@@ -1,4 +1,5 @@
 ﻿
+using Bb.ComponentModel.Translations;
 using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,12 +11,14 @@ namespace Bb.MolecularSite.PropertyGridComponent
     {
 
         [Inject]
-        public TranslateService TranslateService { get; set; }
+        public ITranslateService TranslateService { get; set; }
 
+        [Inject]
+        public IServiceProvider ServiceProvider { get; set; }
 
         protected override Task OnInitializedAsync()
         {
-            Descriptor = new ObjectDescriptor(null, null, TranslateService);
+            Descriptor = new ObjectDescriptor(null, null, TranslateService, ServiceProvider);
             return base.OnInitializedAsync();
         }
 
@@ -28,7 +31,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 if (value != null)
                 {
                     _selectedObject = value;
-                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService);
+                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService, ServiceProvider);
                     d.Analyze();
                     this.Descriptor = d;
                 }

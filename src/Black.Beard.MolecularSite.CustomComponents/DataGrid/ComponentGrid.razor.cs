@@ -1,4 +1,5 @@
-﻿using Bb.MolecularSite.PropertyGridComponent;
+﻿using Bb.ComponentModel.Translations;
+using Bb.MolecularSite.PropertyGridComponent;
 using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 
@@ -9,16 +10,20 @@ namespace Bb.MolecularSite.DataGrid
 
 
         [Inject]
-        public TranslateService TranslateService { get; set; }
+        public ITranslateService TranslateService { get; set; }
 
         public ObjectDescriptor Descriptor { get; set; }
+
+
+        [Inject]
+        public IServiceProvider ServiceProvider { get; set; }
 
         [Parameter]
         public List<T> Datas { get; set; }
 
         protected override Task OnInitializedAsync()
         {
-            this.Descriptor = new ObjectDescriptor(null, typeof(TranslatedKeyLabel), TranslateService);
+            this.Descriptor = new ObjectDescriptor(null, typeof(TranslatedKeyLabel), TranslateService, ServiceProvider);
             this.Descriptor.Analyze();
 
             var result = base.OnInitializedAsync();

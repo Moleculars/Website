@@ -1,4 +1,6 @@
 ﻿
+using Bb.ComponentModel.Translations;
+
 namespace Bb.WebClient.UIComponents
 {
 

@@ -1,4 +1,5 @@
-﻿using Bb.WebClient.UIComponents;
+﻿using Bb.ComponentModel.Translations;
+using Bb.WebClient.UIComponents;
 using System.ComponentModel;
 
 namespace Bb.MolecularSite.PropertyGridComponent
@@ -7,11 +8,12 @@ namespace Bb.MolecularSite.PropertyGridComponent
     public class ObjectDescriptor
     {
 
-        public ObjectDescriptor(object? instance, Type type, TranslateService translateService)
+        public ObjectDescriptor(object? instance, Type type, ITranslateService translateService, IServiceProvider serviceProvider)
         {
             this.Instance = instance;
             this._type = type;
             this.TranslateService = translateService;
+            this.ServiceProvider = serviceProvider;
             this._items = new List<PropertyObjectDescriptor>();
         }
 
@@ -28,8 +30,8 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         }
 
-        public TranslateService TranslateService { get; }
-
+        public ITranslateService TranslateService { get; }
+        public IServiceProvider ServiceProvider { get; }
         public object Instance { get; set; }
 
 

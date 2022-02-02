@@ -25,7 +25,7 @@ namespace Bb.WebHost.ApplicationBuilders
         public void Initialize(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton(typeof(UIService));
-            services.AddSingleton(typeof(ServiceConfigurationMapper));
+            //services.AddSingleton(typeof(ServiceConfigurationMapper));
         }
 
 

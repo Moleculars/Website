@@ -1,4 +1,4 @@
-﻿using Bb.Attributes;
+﻿using Bb.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
 
 namespace Bb.MolecularSite.PropertyGridComponent
@@ -17,7 +17,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             if (this.Property.ListProvider != null && ListResolver == null)
             {
                 Items = new List<ListItem>();
-                this.ListResolver = (IListProvider)Activator.CreateInstance(this.Property.ListProvider);
+                this.ListResolver = (IListProvider)Property.Parent.ServiceProvider.GetService(this.Property.ListProvider);
                 this.ListResolver.Property = this.Property.PropertyDescriptor;
                 this.ListResolver.TranslateService = this.Property.Parent.TranslateService;
             }
