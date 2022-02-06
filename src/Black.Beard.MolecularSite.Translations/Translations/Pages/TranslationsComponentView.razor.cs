@@ -22,6 +22,8 @@ namespace Bb.Translations.Pages
         [Inject]
         public TranslateServiceByRemote TranslateServiceByRemote { get; set; }
 
+        [Inject]
+        public IDialogService DialogService { get;set; }
 
         public CultureInfo Culture { get; set; }
 
@@ -84,7 +86,18 @@ namespace Bb.Translations.Pages
 
         public void Save()
         {
-            DataService.Save(TranslateService);
+
+            DialogOptions options = new DialogOptions() { CloseButton = false, CloseOnEscapeKey = true };
+
+            IDialogReference reference = DialogService.Show<DialogWaitingProssessDone>("     Saving translations     ", options);
+            StateHasChanged();
+
+            DataService.Save(TranslateService, () => reference.Result.IsCompleted);
+
+            reference.Close();
+
+
+
         }
 
         public void Cancel()

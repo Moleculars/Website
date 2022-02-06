@@ -10,7 +10,6 @@ namespace Bb.Sql
     public class SqlProcessor : IDisposable
     {
 
-
         public static SqlProcessor GetSqlProcessor(ConnectionStringSetting connectionStringSetting)
         {
             return new SqlProcessor(connectionStringSetting ?? throw new NullReferenceException(nameof(connectionStringSetting)));
@@ -25,7 +24,6 @@ namespace Bb.Sql
         {
             return new SqlProcessor(settings, connectionStringName);
         }
-
 
         protected SqlProcessor(ConnectionStringSetting connectionStringSetting)
             : this(connectionStringSetting?.ConnectionString, connectionStringSetting.GetProvider())
@@ -60,17 +58,29 @@ namespace Bb.Sql
             SqlProcessorResult result = new SqlProcessorResult();
             result.Success = true;
 
+            DbTransaction transaction = null;
+            bool inTransaction = false;
+            Exception ex = null;
+
             using (var cnx = GetConnexion())
             {
 
                 var scripts = commandText.Split(new string[] { "GO", "go", "Go", "gO" }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var script in scripts)
-                    using (var cmd = Getcommand(cnx, script, parameters))
-                    {
-                        cmd.Connection = cnx;
 
-                        try
+                inTransaction = scripts.Length > 1;
+
+                if (inTransaction)
+                    transaction = cnx.BeginTransaction();
+
+                try
+                {
+
+                    foreach (var script in scripts)
+                        using (var cmd = Getcommand(cnx, script, parameters))
                         {
+                            cmd.Connection = cnx;
+                            if (transaction != null)
+                                cmd.Transaction = transaction;
 
                             var i = cmd.ExecuteNonQuery();
                             if (i > 0)
@@ -79,19 +89,34 @@ namespace Bb.Sql
                             result.Success = true;
 
                         }
-                        catch (Exception e)
-                        {
-                            
-                            if (Debugger.IsAttached)
-                                Debugger.Launch();
 
-                            result.Exception = e;
-                            result.Success = false;
-                            Trace.TraceError(e.Message);
+                }
+                catch (Exception e)
+                {
 
-                        }
+                    ex = e;
+                    if (Debugger.IsAttached)
+                        Debugger.Launch();
 
+                    result.Exception = e;
+                    result.Success = false;
+                    Trace.TraceError(e.Message);
+
+                    if (inTransaction && transaction != null)
+                        transaction.Rollback();
+
+                }
+                finally
+                {
+
+                    if (inTransaction && transaction != null)
+                    {
+                        if (ex == null)
+                            transaction.Commit();
+                        transaction.Dispose();
                     }
+
+                }
 
             }
 
@@ -289,16 +314,38 @@ namespace Bb.Sql
             if (parameters != null)
                 foreach (var param in parameters)
                     if (param != null)
-                        cmd.Parameters.Add(param);
+                    {
+                        var p = Clone(param);
+                        cmd.Parameters.Add(p);
+                    }
 
             return cmd;
+
+        }
+
+        private DbParameter Clone(DbParameter param)
+        {
+
+            var result = _factory.CreateParameter();
+
+            result.ParameterName = param.ParameterName;
+            result.SourceColumn = param.SourceColumn;
+            result.SourceColumnNullMapping = param.SourceColumnNullMapping;
+            result.Precision = param.Precision;
+            result.Scale = param.Scale;
+            result.Size = param.Size;
+            result.DbType = param.DbType;
+            result.Value = param.Value;
+            result.Direction = param.Direction;
+
+            return result;
 
         }
 
         private DbConnectionStringBuilder? _builder;
         private readonly DbProviderFactory? _factory;
         private readonly string? _connexionString;
-        
+
         private bool disposedValue;
 
     }

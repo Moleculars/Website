@@ -85,7 +85,7 @@ namespace Bb.Translations
                 settings._id = Guid.NewGuid();
 
                 var results = Sql.ExecuteNonQuery(
-                        GetSql(_sql_Insert),
+                        GetSql(_sql_settings_Insert),
                         Sql.GetParameter("id", settings._id),
                         Sql.GetParameter("path", settings.GetConcatPath),
                         Sql.GetParameter("key", settings.Key),
@@ -115,13 +115,16 @@ namespace Bb.Translations
 
         }
 
-        public void Save(ITranslateService service)
+        public void Save(ITranslateService service, Func<bool> cancel)
         {
 
             var container = (TranslateContainer)service.Container;
 
             foreach (TranslateServiceDataModel model in container.Parse())
             {
+
+                if (cancel != null &&  cancel())
+                    break;
 
                 if (model.Local)
                 {
@@ -299,7 +302,14 @@ namespace Bb.Translations
 
         private readonly string _tableName;
 
-        private string _sql_Insert = @"INSERT INTO [dbo].[%TableName%] ( [_id], [Path], [Key], [Value], [Culture], [Version], [CreationDtm], [LastUpdate]) VALUES ( @id, @path, @key, @value, @culture, @version, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())";
+        private string _sql_settings_Insert = @"
+
+INSERT INTO [dbo].[%TableName%] ( [_id], [Path], [Key], [Value], [Culture], [Version], [CreationDtm], [LastUpdate]) 
+VALUES ( @id, @path, @key, @value, @culture, @version, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())
+GO
+INSERT INTO [dbo].[%TableName%_history] ( [_id], [Path], [Key], [Value], [Culture], [Version], [CreationDtm]) 
+VALUES ( @id, @path, @key, @value, @culture, @version, SYSDATETIMEOFFSET())
+";
 
 
         private string _sql_Update = @"
@@ -307,7 +317,7 @@ UPDATE [dbo].[%TableName%]
 SET [Path] = @path, [Key] = @key, [Value] = @value, [LastUpdate] = SYSDATETIMEOFFSET(), [Version] = @version + 1  
 WHERE [_id] = @id AND [Version] = @version";
 
-        private string _sql_selectAll = @"SELECT [_id], [Path], [Key], [Value], [culture], [Version], [CreationDtm], [LastUpdate] FROM [%TableName%]";
+        private string _sql_selectAll = @"SELECT [_id], [Path], [Key], [Value], [culture], [Version], [CreationDtm], [LastUpdate] FROM [%TableName%] WITH (NOLOCK)";
 
 
 

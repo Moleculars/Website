@@ -18,7 +18,6 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
         public SqlServerConfigurationDataAccess(string SettingConnectionString, string tableName = "settings")
         {
-
             this._tableName = tableName;
             Sql = SqlProcessor.GetSqlProcessor(SettingConnectionString, SqlClientFactory.Instance);
         }
@@ -68,7 +67,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         {
 
             var results = Sql.ExecuteNonQuery(
-                   GetSql(_sql_Insert),
+                   GetSql(_sql_history_Insert),
                     Sql.GetParameter("sectionName", settings.SectionName),
                     Sql.GetParameter("context", settings.Context),
                     Sql.GetParameter("kind", settings.Kind),
@@ -88,7 +87,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         {
 
             var results = Sql.ExecuteNonQuery(
-                GetSql(_sql_Update),
+                GetSql(_sql_history_Update),
                 Sql.GetParameter("sectionName", settings.SectionName),
                 Sql.GetParameter("value", settings.Value),
                 Sql.GetParameter("version", settings.Version)
@@ -122,7 +121,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         public ConfigurationSettings? LoadConfiguration(string sectionName)
         {
 
-            var queryString = GetSql(_sql_selectAll) + " WHERE [SectionName] = @sectionName";
+            var queryString = GetSql(_sql_history_selectAll) + " WHERE [SectionName] = @sectionName";
             var argument = Sql.GetParameter("sectionName", sectionName);
 
             foreach (var item in Sql.Read(queryString, argument))
@@ -155,7 +154,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
             var datas = new Dictionary<string, ConfigurationSettings>();
 
-            var query = GetSql(_sql_selectAll);
+            var query = GetSql(_sql_history_selectAll);
 
             DbParameter? parameter = null;
             if (LastUpdate.HasValue)
@@ -189,7 +188,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
         public bool CreateTables()
         {
-            var results = Sql.ExecuteNonQuery(GetSql(_sql_create));
+            var results = Sql.ExecuteNonQuery(GetSql(_sql_history_create));
             return results.Success;
         }
 
@@ -209,10 +208,18 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         private readonly string _tableName;
         public SqlProcessor Sql { get; }
 
-        private string _sql_Insert = "INSERT INTO [dbo].[%TableName%] ([SectionName], [Context], [Kind], [Version], [Value], [CreationDtm], [LastUpdate]) VALUES (@sectionName, @context, @kind, @version, @value, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())";
-        private string _sql_Update = "UPDATE [dbo].[%TableName%] SET [Value] = @value, [LastUpdate] = SYSDATETIMEOFFSET(), [Version] = @version + 1  WHERE [SectionName]=@sectionName AND [Version] = @version";
-        private string _sql_selectAll = "SELECT [SectionName], [Context], [Kind], [Version], [Value], [CreationDtm], [LastUpdate] FROM [%TableName%]";
-        private string _sql_create =
+        private string _sql_history_Insert = @"
+
+INSERT INTO [dbo].[%TableName%] ([SectionName], [Context], [Kind], [Version], [Value], [CreationDtm], [LastUpdate]) 
+VALUES (@sectionName, @context, @kind, @version, @value, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())
+GO
+INSERT INTO [dbo].[%TableName%_history] ([SectionName], [Context], [Kind], [Version], [Value], [CreationDtm]) 
+VALUES (@sectionName, @context, @kind, @version, @value, SYSDATETIMEOFFSET())
+
+";
+        private string _sql_history_Update = "UPDATE [dbo].[%TableName%] SET [Value] = @value, [LastUpdate] = SYSDATETIMEOFFSET(), [Version] = @version + 1  WHERE [SectionName]=@sectionName AND [Version] = @version";
+        private string _sql_history_selectAll = "SELECT [SectionName], [Context], [Kind], [Version], [Value], [CreationDtm], [LastUpdate] FROM [%TableName%] WITH (NOLOCK)";
+        private string _sql_history_create =
  @"
 
 SET ANSI_NULLS ON
