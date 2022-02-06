@@ -52,8 +52,16 @@ namespace Bb.Translations.Services
 
         }
 
+        internal IEnumerable<object> Parse()
+        {
+            foreach (var item in _children)
+                yield return item.Value;
+        }
+
         private readonly Dictionary<CultureInfo, TranslateServiceDataModel> _children;
         private volatile object _lock = new object();
+
+
 
     }
 

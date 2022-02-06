@@ -1,7 +1,8 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.ComponentModel.Translations;
 using Bb.Sql;
-using Bb.Storages.ConfigurationProviders.SqlServer;
+using Bb.Translations.Services;
 using System.Data.Common;
 using System.Globalization;
 
@@ -75,7 +76,7 @@ namespace Bb.Translations
         }
 
 
-        public bool InsertConfiguration(TranslateServiceDataModel settings)
+        public bool InsertTranslation(TranslateServiceDataModel settings)
         {
 
             if (settings._id == Guid.Empty)
@@ -86,8 +87,9 @@ namespace Bb.Translations
                 var results = Sql.ExecuteNonQuery(
                         GetSql(_sql_Insert),
                         Sql.GetParameter("id", settings._id),
-                        Sql.GetParameter("path", ConcatPath(settings.Path)),
+                        Sql.GetParameter("path", settings.GetConcatPath),
                         Sql.GetParameter("key", settings.Key),
+                        Sql.GetParameter("culture", settings.Culture.IetfLanguageTag),
                         Sql.GetParameter("version", 1),
                         Sql.GetParameter("value", settings.Value)
                        );
@@ -113,15 +115,38 @@ namespace Bb.Translations
 
         }
 
+        public void Save(ITranslateService service)
+        {
 
-        public bool UpdateConfiguration(TranslateServiceDataModel settings)
+            var container = (TranslateContainer)service.Container;
+
+            foreach (TranslateServiceDataModel model in container.Parse())
+            {
+
+                if (model.Local)
+                {
+                    InsertTranslation(model);
+                }
+                else if (model.IsDirty)
+                {
+
+                    UpdateTranslation(model);
+
+                }
+
+            }
+
+        }
+
+        public bool UpdateTranslation(TranslateServiceDataModel settings)
         {
 
             var results = Sql.ExecuteNonQuery(
                 GetSql(_sql_Update),
                     Sql.GetParameter("id", settings._id),
-                    Sql.GetParameter("path", ConcatPath(settings.Path)),
+                    Sql.GetParameter("path", settings.GetConcatPath),
                     Sql.GetParameter("key", settings.Key),
+                    Sql.GetParameter("value", settings.Value),
                     Sql.GetParameter("version", 1)
                 );
 
@@ -150,7 +175,7 @@ namespace Bb.Translations
         {
 
             var queryString = GetSql(_sql_selectAll) + " WHERE [_id] = @id";
-            var argument = Sql.GetParameter("if", id);
+            var argument = Sql.GetParameter("id", id);
 
             foreach (var item in Sql.Read(queryString, argument))
             {
@@ -167,6 +192,7 @@ namespace Bb.Translations
                     LastUpdate = item.GetDateTime(item.GetOrdinal("LastUpdate")),
                 };
 
+                row.IsDirty = false;
                 CheckLastDate(row);
 
                 return row;
@@ -178,37 +204,28 @@ namespace Bb.Translations
         }
 
 
-        public void Append(TranslateServiceDataModel item)
-        {
-            _toAppend.Add(item, _availableCultures);
-        }
+        //public void Append(TranslateServiceDataModel item)
+        //{
+        //    _toAppend.Add(item, _availableCultures);
+        //}
 
 
-        public IEnumerable<TranslateServiceDataModel> ToAdd()
-        {
+        //public IEnumerable<TranslateServiceDataModel> ToAdd()
+        //{
 
-            foreach (var item1 in _toAppend)
-                foreach (var item2 in item1.Value)
-                    foreach (var item3 in item2.Value)
-                        yield return item3.Value;
+        //    foreach (var item1 in _toAppend)
+        //        foreach (var item2 in item1.Value)
+        //            foreach (var item3 in item2.Value)
+        //                yield return item3.Value;
 
-        }
+        //}
+
 
         public string[] SplitPath(string path)
         {
             if (path != null)
                 return path.Trim().Split('.', StringSplitOptions.RemoveEmptyEntries);
             return new string[0];
-        }
-
-        private string ConcatPath(string[] path)
-        {
-            if (path != null && path.Length > 0)
-            {
-                var result = String.Join(".", path);
-                return result;
-            }
-            return String.Empty;
         }
 
         private string[] ClonePath(string[] path)
@@ -249,7 +266,7 @@ namespace Bb.Translations
                     CreationDtm = item.GetDateTime(item.GetOrdinal("CreationDtm")),
                     LastUpdate = item.GetDateTime(item.GetOrdinal("LastUpdate")),
                 };
-
+                row.IsDirty = false;
                 CheckLastDate(row);
 
                 yield return row;
@@ -282,17 +299,13 @@ namespace Bb.Translations
 
         private readonly string _tableName;
 
-        private string _sql_Insert = @"
-INSERT INTO [dbo].[%TableName%] 
-    ( [_id], [Path], [Key], [Value], [Culture], [Version], [CreationDtm], [LastUpdate]) 
-VALUES 
-    ( @_id, @path, @key, @value, @culture, @version, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())";
+        private string _sql_Insert = @"INSERT INTO [dbo].[%TableName%] ( [_id], [Path], [Key], [Value], [Culture], [Version], [CreationDtm], [LastUpdate]) VALUES ( @id, @path, @key, @value, @culture, @version, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())";
 
 
         private string _sql_Update = @"
 UPDATE [dbo].[%TableName%] 
 SET [Path] = @path, [Key] = @key, [Value] = @value, [LastUpdate] = SYSDATETIMEOFFSET(), [Version] = @version + 1  
-WHERE [id] = @id AND [Version] = @version";
+WHERE [_id] = @id AND [Version] = @version";
 
         private string _sql_selectAll = @"SELECT [_id], [Path], [Key], [Value], [culture], [Version], [CreationDtm], [LastUpdate] FROM [%TableName%]";
 
@@ -348,84 +361,59 @@ GO
 ";
 
         private bool disposedValue;
-        private containerByPath _toAppend = new containerByPath();
+        //private containerByPath _toAppend = new containerByPath();
         private CultureInfo[] _availableCultures;
 
-        private class containerByPath : Dictionary<string, containerByKey>
-        {
-            internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
-            {
+        //private class containerByPath : Dictionary<string, containerByKey>
+        //{
+        //    internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
+        //    {
 
-                var path = item.GetConcatPath;
+        //        var path = item.GetConcatPath;
 
-                if (!this.TryGetValue(path, out var container))
-                    this.Add(item.GetConcatPath, container = new containerByKey());
+        //        if (!this.TryGetValue(path, out var container))
+        //            this.Add(item.GetConcatPath, container = new containerByKey());
 
-                container.Add(item, _availableCultures);
+        //        container.Add(item, _availableCultures);
 
-            }
-        }
+        //    }
+        //}
 
-        private class containerByKey : Dictionary<string, containerByCulture>
-        {
+        //private class containerByKey : Dictionary<string, containerByCulture>
+        //{
 
-            internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
-            {
+        //    internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
+        //    {
 
-                var key = item.Key;
+        //        var key = item.Key;
 
-                if (!this.TryGetValue(key, out var container))
-                    this.Add(key, container = new containerByCulture());
-                container.Add(item, _availableCultures);
+        //        if (!this.TryGetValue(key, out var container))
+        //            this.Add(key, container = new containerByCulture());
+        //        container.Add(item, _availableCultures);
 
-            }
+        //    }
 
-        }
+        //}
 
-        private class containerByCulture : Dictionary<CultureInfo, TranslateServiceDataModel>
-        {
+        //private class containerByCulture : Dictionary<CultureInfo, TranslateServiceDataModel>
+        //{
 
-            internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
-            {
+        //    internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
+        //    {
 
-                var culture = item.Culture;
+        //        var culture = item.Culture;
 
-                if (!this.TryGetValue(culture, out var container))
-                    this.Add(culture, item);
+        //        if (!this.TryGetValue(culture, out var container))
+        //            this.Add(culture, item);
 
-                else if (container._id != item._id)
-                {
+        //        else if (container._id != item._id)
+        //        {
 
-                }
+        //        }
 
+        //    }
 
-                //HashSet<string> keys = new HashSet<string>();
-                //foreach (var item1 in this)
-                //{
-                //    keys.Add(item1.Key.IetfLanguageTag);
-                //    yield return item1.Value;
-                //}
-
-                //foreach (var item2 in _availableCultures)
-                //{
-                //    if (keys.Add(item2.IetfLanguageTag))
-                //    {
-                //        //var b = this.GetNew(item1.Key, item2.Key);
-                //        //b.Culture = item;
-                //        //b.IsDirty = true;
-                //        //b.Local = true;
-                //        //b.Value = String.Empty;
-
-                //        //item2.Value.Add(b);
-
-                //        yield return b;
-                //    }
-                //}
-
-
-            }
-
-        }
+        //}
 
     }
 

@@ -2,6 +2,9 @@
 
 namespace Bb.Translations
 {
+
+
+    [System.Diagnostics.DebuggerDisplay("{GetConcatPath}.{Key} ({Culture}) : {Value}")]
     public class TranslateServiceDataModel
     {
 
@@ -11,7 +14,18 @@ namespace Bb.Translations
 
         public string Key { get; internal set; }
 
-        public string Value { get; set; }
+        public string Value 
+        {
+            get => _value;
+            set
+            {
+                if (_value != value)
+                {
+                    _value = value;
+                    IsDirty = true;
+                }
+            }
+        }
 
         public CultureInfo Culture { get; set; }
 
@@ -23,8 +37,7 @@ namespace Bb.Translations
 
         public bool IsDirty { get; internal set; }
 
-        public bool Local { get; set; }
-
+        public bool Local { get => _id == Guid.Empty; }
 
 
         public string GetConcatPath
@@ -40,7 +53,7 @@ namespace Bb.Translations
             }
         }
 
-
+        private string _value;
 
     }
 }

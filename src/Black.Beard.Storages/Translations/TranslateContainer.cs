@@ -2,6 +2,7 @@
 
 namespace Bb.Translations.Services
 {
+
     public class TranslateContainer
     {
 
@@ -91,11 +92,26 @@ namespace Bb.Translations.Services
 
         }
 
+
+        public IEnumerable<object> Parse()
+        {
+
+            foreach (var item1 in _children)
+                foreach (var item2 in item1.Value.Parse())
+                    yield return item2;
+
+            foreach (var item1 in _Containerchildren)
+                foreach (var item2 in item1.Value.Parse())
+                    yield return item2;
+
+        }
+
         public string Key { get; }
 
         private readonly Dictionary<string, TranslateContainer> _Containerchildren;
         private readonly Dictionary<string, TranslateContainerByCulture> _children;
         private volatile object _lock = new object();
+
 
     }
 

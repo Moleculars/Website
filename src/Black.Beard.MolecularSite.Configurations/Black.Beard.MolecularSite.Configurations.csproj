@@ -19,13 +19,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.24" />
+		<PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.25" />
 		<PackageReference Include="Black.Beard.Helpers.ContentLoaders" Version="1.0.5" />
 		<PackageReference Include="MudBlazor" Version="6.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Black.Beard.MolecularSite.CustomComponents\Black.Beard.MolecularSite.CustomComponents.csproj" />
+	  
+	  <ProjectReference Include="..\Black.Beard.MolecularSite.CustomComponents\Black.Beard.MolecularSite.CustomComponents.csproj" />	  
 	  <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
 	  <ProjectReference Include="..\Black.Beard.WebHost\Black.Beard.WebHost.csproj" />
 	</ItemGroup>

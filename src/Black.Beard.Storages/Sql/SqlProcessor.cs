@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Primitives;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 
 namespace Bb.Sql
 {
@@ -80,8 +81,14 @@ namespace Bb.Sql
                         }
                         catch (Exception e)
                         {
+                            
+                            if (Debugger.IsAttached)
+                                Debugger.Launch();
+
                             result.Exception = e;
                             result.Success = false;
+                            Trace.TraceError(e.Message);
+
                         }
 
                     }

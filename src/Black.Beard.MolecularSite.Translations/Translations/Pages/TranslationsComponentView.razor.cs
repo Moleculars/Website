@@ -12,41 +12,36 @@ namespace Bb.Translations.Pages
     {
 
         [Inject]
-        public TranslateServiceDataAccess Service { get; set; }
+        public TranslateServiceDataAccess DataService { get; set; }
 
+        
         [Inject]
         public ITranslateService TranslateService { get; set; }
 
-        public Func<PropertyObjectDescriptor, bool> PropertiesFilter { get; set; }
 
         [Inject]
         public TranslateServiceByRemote TranslateServiceByRemote { get; set; }
 
+
         public CultureInfo Culture { get; set; }
 
-        //protected override Task OnAfterRenderAsync(bool firstRender)
-        //{
 
-        //    HashSet<string> _toExclude = new HashSet<string>() { "Version", "CreationDtm", "LastUpdate", "IsDirty", "GetConcatPath", "Path", "Local" };
-        //    PropertiesFilter = (p) =>
-        //    {
-        //        return !_toExclude.Contains(p.PropertyDescriptor.Name);
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+          
+            var serv = TranslateService as TranslateService;
+            if (serv != null)
+                TreeItems.Add(new TranslationTreeItemData(serv.Container)
+                {
+                    Title = "Root",
 
-        //    };
-    
-        //    var serv = TranslateService as TranslateService;
-        //    if (serv != null)
-        //        TreeItems.Add(new TranslationTreeItemData(serv.Data)
-        //        {
-        //            Title = "Root",
+                });
 
-        //        });
+            StateHasChanged();
 
-        //    StateHasChanged();
+            return base.OnAfterRenderAsync(firstRender);
 
-        //    return base.OnAfterRenderAsync(firstRender);
-
-        //}
+        }
 
         private TranslationTreeItemData ActivatedValue { get; set; }
 
@@ -89,11 +84,7 @@ namespace Bb.Translations.Pages
 
         public void Save()
         {
-            //if (ServiceConfigurations != null)
-            //{
-            //    var sectionName = ConfigurationSerializer.GetConfigurationKey(CurrentItem.GetType());
-            //    ServiceConfigurations.Save(CurrentItem, sectionName);
-            //}
+            DataService.Save(TranslateService);
         }
 
         public void Cancel()

@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.24" />
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.24" />
+    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.25" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.25" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="MudBlazor" Version="6.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

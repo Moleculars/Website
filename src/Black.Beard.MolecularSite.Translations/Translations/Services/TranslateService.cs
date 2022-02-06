@@ -27,7 +27,7 @@ namespace Bb.Translations.Services
             return Translate(CultureInfo.CurrentUICulture, key);
         }
 
-        public TranslateContainer Data { get => datas; }
+        public object Container { get => datas; }
 
         public CultureInfo[] AvailableCultures => DataAccess.AvailableCultures;
 
@@ -51,43 +51,31 @@ namespace Bb.Translations.Services
                 if ((r = datas.Resolve(DataAccess.SplitPath(label.Path), label.Key, culture, 0, out TranslateServiceDataModel result)) != TranslateContainerResult.Resolved)
                     lock (_lock)
                         if ((r = datas.Resolve(DataAccess.SplitPath(label.Path), label.Key, culture, 0, out result)) != TranslateContainerResult.Resolved)
-                        {
-
-
                             foreach (var item in label.Datas)
                             {
-
                                 var result1 = DataAccess.GetNew(label.Path, label.Key);
-                                result1.Local = true;
                                 result1.Culture = item.Value.Culture;
                                 result1.Value = item.Value.Value ?? label.DefaultDisplay;
                                 var sorted = datas.Sort(result1);
-
-                                if (sorted == TranslateContainerResult.Added)
-                                    DataAccess.Append(result1);
-
                                 if (result1.Culture.IetfLanguageTag == culture.IetfLanguageTag)
                                     result = result1;
-
                             }
 
 
-                            foreach (var item in this.AvailableCultures)
-                            {
-                                if ((r = datas.Resolve(DataAccess.SplitPath(label.Path), label.Key, item, 0, out TranslateServiceDataModel result2)) != TranslateContainerResult.Resolved)
+                foreach (var cultureItem in this.AvailableCultures)
+                    if ((r = datas.Resolve(DataAccess.SplitPath(label.Path), label.Key, cultureItem, 0, out result)) != TranslateContainerResult.Resolved)
+                        lock (_lock)
+                            if ((r = datas.Resolve(DataAccess.SplitPath(label.Path), label.Key, cultureItem, 0, out result)) != TranslateContainerResult.Resolved)
+                                foreach (var item in label.Datas)
                                 {
-                                    result2 = DataAccess.GetNew(label.Path, label.Key);
-                                    result2.Local = true;
-                                    result2.Culture = item;
-                                    result2.Value = label.DefaultDisplay;
-                                    var sorted = datas.Sort(result2);
-                                    if (sorted == TranslateContainerResult.Added)
-                                        DataAccess.Append(result2);
+                                    var result1 = DataAccess.GetNew(label.Path, label.Key);
+                                    result1.Culture = cultureItem;
+                                    result1.Value = item.Value.Value ?? label.DefaultDisplay;
+                                    var sorted = datas.Sort(result1);
+                                    if (result1.Culture.IetfLanguageTag == culture.IetfLanguageTag)
+                                        result = result1;
                                 }
-                            }
 
-
-                        }
 
                 if (result != null)
                     return result.Value;
