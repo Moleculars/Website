@@ -4,27 +4,32 @@ using System.ComponentModel;
 namespace Bb.MolecularSite.PropertyGridComponent
 {
 
-    public partial class ComponentFieldBase : ComponentBase, INotifyPropertyChanged
+    public partial class ComponentFieldBase : ComponentBase
     {
 
         [Parameter]
-        public PropertyObjectDescriptor? Property { get; set; }
+        public PropertyObjectDescriptor? Property 
+        {
+            get => _property;
+            set
+            {
+                _property = value;
+                PropertyChange();                
+            }
+        }
 
 
         public string? ErrorText { get; set; }
 
 
-        protected void PropertyChange()
+        protected virtual void PropertyChange()
         {
 
-            if (PropertyChanged != null && this.Property != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(this.Property.Parent.TranslateService.Translate(Property.Display)));
+            StateHasChanged();
 
         }
 
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
+        private PropertyObjectDescriptor? _property;
 
     }
 

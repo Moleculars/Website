@@ -19,13 +19,7 @@ namespace MolecularSite.CommandLines
         {
 
         
-            var builder = WebApplication.CreateBuilder();
-
-            // Add services to the container.
-            builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor();
-            builder.Services.AddMudServices();
-
+            var builder = WebApplication.CreateBuilder();                     
 
             var loader = builder.LoadConfiguration(this._args);
 
@@ -37,8 +31,6 @@ namespace MolecularSite.CommandLines
 
             if (useSwagger)
             {
-
-                // Swagger
                 builder.Services.AddEndpointsApiExplorer();
                 // builder.Services.AddSwaggerGen();
                 builder.Services.AddSwaggerGen(options =>
@@ -66,8 +58,7 @@ namespace MolecularSite.CommandLines
 
             var app = builder.Build()
                 .ConfigureInjectedServices(loader)
-                .ConfigureUseExceptionHandler(err => err.UseCustomErrors(loader))
-            ;
+                ;
 
 
             if (useSwagger)
@@ -96,12 +87,6 @@ namespace MolecularSite.CommandLines
                     .AppendMiddleware<LoggingSupervisionMiddleware>();
 
             }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.MapBlazorHub();
-            app.MapFallbackToPage("/_Host");
 
 
             app.Run();

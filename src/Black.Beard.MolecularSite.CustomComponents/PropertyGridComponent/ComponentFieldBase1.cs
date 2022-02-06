@@ -37,7 +37,11 @@ namespace Bb.MolecularSite.PropertyGridComponent
             set
             {
                 if (Property != null)
+                {
                     Property.Value = Save(value);
+                    PropertyChange();
+                }
+
             }
 
         }

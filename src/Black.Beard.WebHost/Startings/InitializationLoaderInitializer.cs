@@ -21,6 +21,80 @@ namespace Bb.WebHost.Startings
     public static class InitializationLoaderInitializer
     {
 
+
+        public static InitializationLoader LoadConfiguration(this WebApplicationBuilder builder, string[] args)
+        {
+
+            IHostEnvironment env = builder.Environment;
+            ConfigurationManager conf = builder.Configuration;
+
+            string path = Environment.CurrentDirectory;
+            conf.SetBasePath(path);
+
+            var result = new InitializationLoader(builder, env, path, args)
+            {
+                InitialConfigurationRoot = conf,
+            }
+            .LoadPrimaryConfiguration()
+            .LoadAbstractLoaders()
+            .LoadAssemblies()
+            .ResolveInjections()
+            .InjectServices()
+            .ResolveBuilders()
+            ;
+
+            var assemblyResolver = new Bb.Services.BlazorAssemblyResolver(result);
+
+
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// Loads the directories json files from configuration.
+        /// </summary>
+        /// <param name="configurationBuilder">The configuration builder.</param>
+        /// <param name="self">The self.</param>
+        /// <returns></returns>
+        public static InitializationLoader LoadAbstractLoaders(this InitializationLoader loader)
+        {
+
+            var self = loader.InitialConfiguration;
+
+            if (self.Loaders != null)
+            {
+
+                bool configLoaded = false;
+
+                foreach (var item in self.Loaders)
+                {
+                    var type = Type.GetType(item.Type);
+                    if (type == null)
+                        throw new NotImplementedException(item.Type);
+
+                    if (Activator.CreateInstance(type) is not IConfigurationLoader srv)
+                        throw new InvalidCastException(item.Type);
+
+                    srv.Configuration = item;
+                    srv.Load(loader);
+
+                    if (srv.ConfigLoaded)
+                        configLoaded = true;
+
+                }
+
+                if (!configLoaded)
+                    Trace.WriteLine("no configuration file loaded", TraceLevel.Info.ToString());
+
+            }
+            else
+                Trace.WriteLine("no configuration folder specified", TraceLevel.Info.ToString());
+
+            return loader;
+
+        }
+
         /// <summary>
         /// Inject collected services
         /// </summary>
@@ -30,9 +104,43 @@ namespace Bb.WebHost.Startings
         public static InitializationLoader ResolveBuilders(this InitializationLoader self)
         {
 
+            // Inject individual types in the ioc
+            foreach (var item in self.Builders)
+                self.InstancesBuilders.Add((IApplicationBuilderInitializer)Activator.CreateInstance(item));
 
-            var services = self.Builder.Services;
+            var builder = self.Builder;
 
+            var items = self.InstancesBuilders.ToList();
+            var max = items.Count;
+            int count = 0;
+            var toRemove = new List<IApplicationBuilderInitializer>();
+
+
+            while (items.Count > 0 && count < max)
+            {
+
+                foreach (var item in self.InstancesBuilders)
+                    if (item.CanInitialize(builder))
+                    {
+                        item.Initialize(builder);
+                        toRemove.Add(item);
+                    }
+
+                foreach (var item in toRemove)
+                    items.Remove(item);
+
+                toRemove.Clear();
+
+            }
+
+            return self;
+
+        }
+
+        private static InitializationLoader InjectServices(this InitializationLoader self)
+        {
+
+            IServiceCollection services = self.Builder.Services;
 
             // Inject individual types in the ioc
             foreach (var item in self.InjectBuilders)
@@ -96,93 +204,7 @@ namespace Bb.WebHost.Startings
 
             }
 
-            // Inject individual types in the ioc
-            foreach (var item in self.Builders)
-                self.InstancesBuilders.Add((IApplicationBuilderInitializer)Activator.CreateInstance(item));
-
-            var configuration = self.InitialConfigurationRoot;
-
-            foreach (var item in self.InstancesBuilders)
-                item.Initialize(services, configuration);
-
             return self;
-
-        }
-
-        public static InitializationLoader LoadConfiguration(this WebApplicationBuilder builder, string[] args)
-        {
-
-            
-
-            IHostEnvironment env = builder.Environment;
-            ConfigurationManager conf = builder.Configuration;
-
-            string path = Environment.CurrentDirectory;
-            conf.SetBasePath(path);
-
-            var result = new InitializationLoader(builder, env, path, args)
-            {
-                ConfigurationBuilder = conf,
-                InitialConfigurationRoot = conf,
-            }
-            .LoadPrimaryConfiguration()
-            .LoadAbstractLoaders()
-            .LoadAssemblies()
-            .ResolveInjections()
-
-            .ResolveBuilders()
-
-            ;
-
-            var assemblyResolver = new Bb.Services.BlazorAssemblyResolver(result);
-
-            
-
-            return result;
-
-        }
-
-        /// <summary>
-        /// Loads the directories json files from configuration.
-        /// </summary>
-        /// <param name="configurationBuilder">The configuration builder.</param>
-        /// <param name="self">The self.</param>
-        /// <returns></returns>
-        public static InitializationLoader LoadAbstractLoaders(this InitializationLoader loader)
-        {
-
-            var self = loader.InitialConfiguration;
-
-            if (self.Loaders != null)
-            {
-
-                bool configLoaded = false;
-
-                foreach (var item in self.Loaders)
-                {
-                    var type = Type.GetType(item.Type);
-                    if (type == null)
-                        throw new NotImplementedException(item.Type);
-
-                    if (Activator.CreateInstance(type) is not IConfigurationLoader srv)
-                        throw new InvalidCastException(item.Type);
-
-                    srv.Configuration = item;
-                    srv.Load(loader);
-
-                    if (srv.ConfigLoaded)
-                        configLoaded = true;
-
-                }
-
-                if (!configLoaded)
-                    Trace.WriteLine("no configuration file loaded", TraceLevel.Info.ToString());
-
-            }
-            else
-                Trace.WriteLine("no configuration folder specified", TraceLevel.Info.ToString());
-
-            return loader;
 
         }
 
@@ -225,7 +247,7 @@ namespace Bb.WebHost.Startings
                         else
                             self.InjectBuilders.Add(item2.LifeCycle, t, item1.Key);
                     }
-                    
+
                 }
 
             self.InjectBuilders.Add(IocScopeEnum.Singleton, typeof(ExposedTypeRepository), self.ExposedTypes);
@@ -311,12 +333,6 @@ namespace Bb.WebHost.Startings
                 new ExposedType(typeof(InitialConfiguration), ConstantsCore.Configuration, srv => self.InitialConfiguration)
                 );
 
-
-
-
-            //System.Configuration.ConnectionStringsSection
-
-            // var conf = new ConfigurationXmlSerializer<System.Configuration.ConnectionStringsSection>();
 
             return self;
 

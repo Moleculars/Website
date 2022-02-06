@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Bb.WebHost.ApplicationBuilders
 {
@@ -22,20 +23,26 @@ namespace Bb.WebHost.ApplicationBuilders
 
         }
 
-        public void Initialize(IServiceCollection services, IConfiguration configuration)
+        public bool CanInitialize(WebApplicationBuilder builder)
         {
+            return true;
+        }
+
+        public void Initialize(WebApplicationBuilder builder)
+        {
+            var services = builder.Services;
+            
             services.AddSingleton(typeof(UIService));
-            //services.AddSingleton(typeof(ServiceConfigurationMapper));
+            services.AddHttpClient();
+
         }
 
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public bool CanConfigure(IApplicationBuilder app)
         {
-
+            return true;
         }
 
-
-        public void Configure(IApplicationBuilder app, IHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
 
         }

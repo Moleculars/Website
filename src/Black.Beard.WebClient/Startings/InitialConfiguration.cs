@@ -37,10 +37,6 @@ namespace Bb.WebClient.Startings
 
         public bool UseSwagger { get; set; } = false;
 
-
-        // public ServiceWeb Web { get; }
-
-
     }
 
 

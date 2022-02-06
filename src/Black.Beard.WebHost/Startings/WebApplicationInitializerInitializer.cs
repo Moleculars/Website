@@ -1,7 +1,9 @@
 ﻿using Bb.ComponentModel;
+using Bb.WebClient.ApplicationBuilders;
 using Bb.WebClient.Startings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -38,10 +40,27 @@ namespace Bb.WebHost.Startings
 
             InitializeBuilders(_initializationLoader, app);
 
-            IWebHostEnvironment env = app.Environment;
+            var items = _initializationLoader.InstancesBuilders.ToList();
+            var max = items.Count;
+            int count = 0;
+            var toRemove = new List<IApplicationBuilderInitializer>();
 
-            foreach (var item in _initializationLoader.InstancesBuilders)
-                item.Configure(app, env);
+            while (items.Count > 0 && count < max)
+            {
+
+                foreach (var item in items)
+                    if (item.CanConfigure(app))
+                    {
+                        item.Configure(app);
+                        toRemove.Add(item);
+                    }
+
+                foreach (var item in toRemove)
+                    items.Remove(item);
+
+                toRemove.Clear();
+
+            }           
 
             return app;
 

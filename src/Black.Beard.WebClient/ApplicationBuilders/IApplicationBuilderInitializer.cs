@@ -11,11 +11,19 @@ namespace Bb.WebClient.ApplicationBuilders
     public interface IApplicationBuilderInitializer
     {
 
-        void Initialize(IServiceCollection services, IConfiguration configuration);
 
-        void Configure(IApplicationBuilder app, IWebHostEnvironment env);
+        bool CanInitialize(WebApplicationBuilder builder);
 
-        void Configure(IApplicationBuilder app, IHostEnvironment env);
+
+        void Initialize(WebApplicationBuilder builder);
+
+
+
+
+        bool CanConfigure(IApplicationBuilder app);
+
+
+        void Configure(IApplicationBuilder app);
 
 
     }

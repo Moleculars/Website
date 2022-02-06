@@ -2,6 +2,73 @@
 @using MudBlazor
 @using Bb.WebClient.UIComponents
 @using Bb.ComponentModel.Translations
+@using Bb.MolecularSite.PropertyGridComponent
+@using Bb.MolecularSite.DataGrid
+@using Bb.Translations
+@using Bb.Translations.Services
+
 <h1>Translations</h1>
 
-<Bb.MolecularSite.DataGrid.ComponentGrid T="TranslatedKeyLabel" Datas="@Translations" />
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+    <MudButton ButtonType="ButtonType.Button" OnClick="Cancel">@TranslateService.Translate("p:ConfigurationComponentView.razor,l:en-us,k:Cancel,d:Cancel")</MudButton>
+    <MudButton ButtonType="ButtonType.Button" OnClick="Save">@TranslateService.Translate("p:ConfigurationComponentView.razor,l:en-us,k:Save,d:Save")</MudButton>
+</MudButtonGroup>
+
+<MudGrid>
+
+    <MudItem xs="4">
+
+        <MudTreeView Items="TreeItems"
+                     MultiSelection="false"
+                     @bind-ActivatedValue="ActivatedValue"
+                     @bind-SelectedValues="SelectedValues">
+
+            <ItemTemplate>
+                <MudTreeViewItem @bind-Expanded="@context.IsExpanded"
+                                 Items="@context.TreeItems"
+                                 Value="@context"
+                                 Icon="@context.Icon"
+                                 Text="@context.Title"
+                                 EndText="@context.Number?.ToString()"
+                                 EndTextTypo="@Typo.caption" />
+            </ItemTemplate>
+
+        </MudTreeView>
+
+    </MudItem>
+
+    <MudItem xs="8">
+
+        <MudDataGrid Items="@Values" Dense="true" ReadOnly="false" EditMode="@DataGridEditMode.Inline" Sortable="true">
+            <Columns>
+                <Column T="TranslateServiceDataModel" Field="Culture" Title="Culture" IsEditable="false" />
+                <Column T="TranslateServiceDataModel" Field="Value" Title="Value" IsEditable="true">
+                    <EditTemplate>
+                        <MudIconButton Icon="@Icons.Material.Filled.Translate" OnClick="@(() => Show(context))" Color="Color.Secondary" aria-label="Translate"></MudIconButton>
+                        <MudTextField @bind-Value="context.Value" Variant="Variant.Text"></MudTextField>
+                    </EditTemplate>
+                </Column>
+            </Columns>
+        </MudDataGrid>
+
+
+        <MudMessageBox @ref="mbox" Title="@TranslateService.Translate("p:TranslationPage,k:TitleCallService,l:en-us,d:Call translation Deepl service")" CancelText="@TranslateService.Translate("p:TranslationPage,k:CancelButton,l:en-us,d:Cancel")">
+
+            <MessageContent>
+                <MudSelect @bind-Value="Culture" Margin="@Margin.Dense" Label="@TranslateService.Translate("p:TranslationPage,k:SelectLanguage,l:en-us,d:Select a source language")">
+                    @foreach (var item in TranslateService.AvailableCultures)
+                    {
+                        <MudSelectItem Value="@item">@item.DisplayName</MudSelectItem>
+                    }
+                </MudSelect>
+            </MessageContent>
+
+            <YesButton>
+                <MudButton Variant="Variant.Filled" OnClick="@(() => Translate())" Color="Color.Error" StartIcon="@Icons.Material.Filled.Translate">@TranslateService.Translate("p:TranslationPage,k:CallServiceButton,l:en-us,d:Resolve translation!")</MudButton>
+            </YesButton>
+
+        </MudMessageBox>
+
+    </MudItem>
+</MudGrid>

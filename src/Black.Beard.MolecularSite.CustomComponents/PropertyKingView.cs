@@ -1,4 +1,4 @@
-﻿namespace Bb.MolecularSite.PropertyGridComponent
+﻿namespace Bb.MolecularSite
 {
 
     public enum PropertyKingView

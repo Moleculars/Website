@@ -1,5 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using System.Diagnostics;
 
 namespace Bb.Configurations
 {
@@ -23,7 +24,16 @@ namespace Bb.Configurations
         {
             var datas = _configuration.GetSection(keyMapper);
             if (datas != null && datas.Value != null)
-                instance.Map(datas.Value);
+            {
+                try
+                {
+                    instance.Map(datas.Value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+                }
+            }
         }
 
     }

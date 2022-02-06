@@ -16,8 +16,27 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
         public SqlServerConfigurationProvider(SqlServerConfigurationDataAccess dataAccess)
         {
             _dataAccess = dataAccess;
+            _dataAccess.HasChanged += ConfiguraitonHasChanged;
         }
 
+        private void ConfiguraitonHasChanged(object? sender, ConfigurationHasChangedEventArgs e)
+        {
+
+            var item = e.Item;
+            if (item != null)
+            {
+                lock (_lock)
+                {
+                    if (Data.ContainsKey(item.SectionName))
+                        Data[item.SectionName] = item.Value;
+                    else
+                        Data.Add(item.SectionName, item.Value);
+                }
+            }
+            else
+                Load();
+
+        }
 
         public override void Load()
         {
@@ -46,6 +65,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
                 if (disposing)
                 {
+                    _dataAccess.HasChanged -= ConfiguraitonHasChanged;
                     _dataAccess.Dispose();
                 }
 

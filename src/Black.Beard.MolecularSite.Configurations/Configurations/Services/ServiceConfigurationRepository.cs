@@ -45,7 +45,6 @@ namespace Bb.Configurations.services
 
         }
 
-
         public ItemEnumerable[] GetConfigurationsTypes()
         {
 

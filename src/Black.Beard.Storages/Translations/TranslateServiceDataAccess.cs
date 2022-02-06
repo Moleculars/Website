@@ -3,6 +3,7 @@ using Bb.ComponentModel.Attributes;
 using Bb.Sql;
 using Bb.Storages.ConfigurationProviders.SqlServer;
 using System.Data.Common;
+using System.Globalization;
 
 namespace Bb.Translations
 {
@@ -11,12 +12,20 @@ namespace Bb.Translations
     public class TranslateServiceDataAccess
     {
 
+
         public TranslateServiceDataAccess(TranslationConfiguration connection)
         {
+
             this._tableName = connection.TableName;
             var cnx = connection.GetConnection() ?? throw new NullReferenceException(nameof(connection));
             Sql = SqlProcessor.GetSqlProcessor(cnx);
+
+            _availableCultures = connection.Cultures.ToArray();
+
         }
+
+
+        public CultureInfo[] AvailableCultures { get { return _availableCultures; } }
 
 
         public DateTimeOffset? LastUpdate { get; private set; }
@@ -54,51 +63,77 @@ namespace Bb.Translations
         }
 
 
-        public ConfigurationSettings GetNew(string sectionName, string context, string kind)
+        public TranslateServiceDataModel GetNew(string path, string key)
         {
-            return new ConfigurationSettings()
+            return new TranslateServiceDataModel()
             {
-                SectionName = sectionName,
-                Context = context,
-                Kind = kind,
+                _id = Guid.Empty,
+                Path = SplitPath(path),
+                Key = key,
+                IsDirty = true,
             };
         }
 
 
-        public bool InsertConfiguration(ConfigurationSettings settings)
+        public bool InsertConfiguration(TranslateServiceDataModel settings)
         {
 
-            var results = Sql.ExecuteNonQuery(
-                   GetSql(_sql_Insert),
-                    Sql.GetParameter("sectionName", settings.SectionName),
-                    Sql.GetParameter("context", settings.Context),
-                    Sql.GetParameter("kind", settings.Kind),
-                    Sql.GetParameter("version", 1),
-                    Sql.GetParameter("value", settings.Value)
-                   );
+            if (settings._id == Guid.Empty)
+            {
 
-            return results.InpactedObject > 0;
+                settings._id = Guid.NewGuid();
+
+                var results = Sql.ExecuteNonQuery(
+                        GetSql(_sql_Insert),
+                        Sql.GetParameter("id", settings._id),
+                        Sql.GetParameter("path", ConcatPath(settings.Path)),
+                        Sql.GetParameter("key", settings.Key),
+                        Sql.GetParameter("version", 1),
+                        Sql.GetParameter("value", settings.Value)
+                       );
+
+
+                if (results.InpactedObject > 0)
+                {
+
+                    var newConfig = Load(settings._id);
+                    if (newConfig != null)
+                    {
+                        settings.CreationDtm = newConfig.CreationDtm;
+                        settings.LastUpdate = newConfig.LastUpdate;
+                        settings.Value = newConfig.Value;
+                        settings.IsDirty = false;
+                        return true;
+                    }
+
+                }
+            }
+
+            return false;
 
         }
 
 
-        public bool UpdateConfiguration(ConfigurationSettings settings)
+        public bool UpdateConfiguration(TranslateServiceDataModel settings)
         {
 
             var results = Sql.ExecuteNonQuery(
                 GetSql(_sql_Update),
-                Sql.GetParameter("sectionName", settings.SectionName),
-                Sql.GetParameter("value", settings.Value),
-                Sql.GetParameter("version", settings.Version)
+                    Sql.GetParameter("id", settings._id),
+                    Sql.GetParameter("path", ConcatPath(settings.Path)),
+                    Sql.GetParameter("key", settings.Key),
+                    Sql.GetParameter("version", 1)
                 );
 
             if (results.InpactedObject > 0)
             {
-                var newConfig = LoadConfiguration(settings.SectionName);
+                var newConfig = Load(settings._id);
                 if (newConfig != null)
                 {
                     settings.LastUpdate = newConfig.LastUpdate;
                     settings.Version = newConfig.Version;
+                    settings.Path = ClonePath(newConfig.Path);
+                    settings.Key = newConfig.Key;
                     settings.Value = newConfig.Value;
                     settings.IsDirty = false;
                     return true;
@@ -111,23 +146,23 @@ namespace Bb.Translations
 
         }
 
-
-        public ConfigurationSettings? LoadConfiguration(string sectionName)
+        public TranslateServiceDataModel? Load(Guid id)
         {
 
-            var queryString = GetSql(_sql_selectAll) + "WHERE [SectionName] = @sectionName";
-            var argument = Sql.GetParameter("sectionName", sectionName);
+            var queryString = GetSql(_sql_selectAll) + " WHERE [_id] = @id";
+            var argument = Sql.GetParameter("if", id);
 
             foreach (var item in Sql.Read(queryString, argument))
             {
 
-                var row = new ConfigurationSettings()
+                var row = new TranslateServiceDataModel()
                 {
-                    SectionName = item.GetString(item.GetOrdinal("SectionName")),
-                    Context = item.GetString(item.GetOrdinal("Context")),
-                    Kind = item.GetString(item.GetOrdinal("Kind")),
-                    Version = item.GetInt32(item.GetOrdinal("Version")),
+                    _id = item.GetGuid(item.GetOrdinal("_id")),
+                    Path = SplitPath(item.GetString(item.GetOrdinal("Path"))),
+                    Key = item.GetString(item.GetOrdinal("Key")),
                     Value = item.GetString(item.GetOrdinal("Value")),
+                    Culture = GetCulture(item.GetString(item.GetOrdinal("culture"))),
+                    Version = item.GetInt32(item.GetOrdinal("Version")),
                     CreationDtm = item.GetDateTime(item.GetOrdinal("CreationDtm")),
                     LastUpdate = item.GetDateTime(item.GetOrdinal("LastUpdate")),
                 };
@@ -143,10 +178,53 @@ namespace Bb.Translations
         }
 
 
-        public Dictionary<string, ConfigurationSettings> LoadConfigurations()
+        public void Append(TranslateServiceDataModel item)
+        {
+            _toAppend.Add(item, _availableCultures);
+        }
+
+
+        public IEnumerable<TranslateServiceDataModel> ToAdd()
         {
 
-            var datas = new Dictionary<string, ConfigurationSettings>();
+            foreach (var item1 in _toAppend)
+                foreach (var item2 in item1.Value)
+                    foreach (var item3 in item2.Value)
+                        yield return item3.Value;
+
+        }
+
+        public string[] SplitPath(string path)
+        {
+            if (path != null)
+                return path.Trim().Split('.', StringSplitOptions.RemoveEmptyEntries);
+            return new string[0];
+        }
+
+        private string ConcatPath(string[] path)
+        {
+            if (path != null && path.Length > 0)
+            {
+                var result = String.Join(".", path);
+                return result;
+            }
+            return String.Empty;
+        }
+
+        private string[] ClonePath(string[] path)
+        {
+            return path?.ToArray() ?? new string[0];
+        }
+
+        private CultureInfo GetCulture(string key)
+        {
+            var result = CultureInfo.GetCultureInfo(key);
+            return result;
+        }
+
+
+        public IEnumerable<TranslateServiceDataModel> GetAll()
+        {
 
             var query = GetSql(_sql_selectAll);
 
@@ -160,24 +238,24 @@ namespace Bb.Translations
             foreach (var item in Sql.Read(query, parameter))
             {
 
-                var row = new ConfigurationSettings()
+                var row = new TranslateServiceDataModel()
                 {
-                    SectionName = item.GetString(item.GetOrdinal("SectionName")),
-                    Context = item.GetString(item.GetOrdinal("Context")),
-                    Kind = item.GetString(item.GetOrdinal("Kind")),
-                    Version = item.GetInt32(item.GetOrdinal("Version")),
+                    _id = item.GetGuid(item.GetOrdinal("_id")),
+                    Path = SplitPath(item.GetString(item.GetOrdinal("Path"))),
+                    Key = item.GetString(item.GetOrdinal("Key")),
                     Value = item.GetString(item.GetOrdinal("Value")),
+                    Culture = GetCulture(item.GetString(item.GetOrdinal("culture"))),
+                    Version = item.GetInt32(item.GetOrdinal("Version")),
                     CreationDtm = item.GetDateTime(item.GetOrdinal("CreationDtm")),
                     LastUpdate = item.GetDateTime(item.GetOrdinal("LastUpdate")),
                 };
 
                 CheckLastDate(row);
 
-                datas.Add(row.SectionName, row);
+                yield return row;
 
             }
 
-            return datas;
         }
 
         public SqlProcessor Sql { get; }
@@ -193,7 +271,7 @@ namespace Bb.Translations
             return sql.Replace("%TableName%", this._tableName);
         }
 
-        private void CheckLastDate(ConfigurationSettings row)
+        private void CheckLastDate(TranslateServiceDataModel row)
         {
 
             if (row.LastUpdate > this.LastUpdate || !this.LastUpdate.HasValue)
@@ -201,53 +279,25 @@ namespace Bb.Translations
 
         }
 
+
         private readonly string _tableName;
 
         private string _sql_Insert = @"
 INSERT INTO [dbo].[%TableName%] 
-    ( [_id]
-    , [Path]
-    , [Key]
-    , [Value]
-    , [Culture]
-    , [Version]
-    , [CreationDtm]
-    , [LastUpdate]
-) 
+    ( [_id], [Path], [Key], [Value], [Culture], [Version], [CreationDtm], [LastUpdate]) 
 VALUES 
-    ( @_id
-    , @path
-    , @key
-    , @value
-    , @culture
-    , @version
-    , SYSDATETIMEOFFSET()
-    , SYSDATETIMEOFFSET()
-)";
+    ( @_id, @path, @key, @value, @culture, @version, SYSDATETIMEOFFSET(), SYSDATETIMEOFFSET())";
+
 
         private string _sql_Update = @"
 UPDATE [dbo].[%TableName%] 
-SET 
-      [Path] = @path
-    , [Key] = @key
-    , [Value] = @value
-    , [LastUpdate] = SYSDATETIMEOFFSET()
-    , [Version] = @version + 1  
-WHERE 
-    [SectionName]=@sectionName 
-AND [Version] = @version";
+SET [Path] = @path, [Key] = @key, [Value] = @value, [LastUpdate] = SYSDATETIMEOFFSET(), [Version] = @version + 1  
+WHERE [id] = @id AND [Version] = @version";
 
-        private string _sql_selectAll = @"
-SELECT 
-	[_id],
-	[Path],
-	[Key],
-	[Value],
-	[culture],
-	[Version],
-	[CreationDtm],
-	[LastUpdate],
-FROM [%TableName%]";
+        private string _sql_selectAll = @"SELECT [_id], [Path], [Key], [Value], [culture], [Version], [CreationDtm], [LastUpdate] FROM [%TableName%]";
+
+
+
 
         private string _sql_create =
  @"
@@ -298,11 +348,86 @@ GO
 ";
 
         private bool disposedValue;
+        private containerByPath _toAppend = new containerByPath();
+        private CultureInfo[] _availableCultures;
 
+        private class containerByPath : Dictionary<string, containerByKey>
+        {
+            internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
+            {
+
+                var path = item.GetConcatPath;
+
+                if (!this.TryGetValue(path, out var container))
+                    this.Add(item.GetConcatPath, container = new containerByKey());
+
+                container.Add(item, _availableCultures);
+
+            }
+        }
+
+        private class containerByKey : Dictionary<string, containerByCulture>
+        {
+
+            internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
+            {
+
+                var key = item.Key;
+
+                if (!this.TryGetValue(key, out var container))
+                    this.Add(key, container = new containerByCulture());
+                container.Add(item, _availableCultures);
+
+            }
+
+        }
+
+        private class containerByCulture : Dictionary<CultureInfo, TranslateServiceDataModel>
+        {
+
+            internal void Add(TranslateServiceDataModel item, CultureInfo[] _availableCultures)
+            {
+
+                var culture = item.Culture;
+
+                if (!this.TryGetValue(culture, out var container))
+                    this.Add(culture, item);
+
+                else if (container._id != item._id)
+                {
+
+                }
+
+
+                //HashSet<string> keys = new HashSet<string>();
+                //foreach (var item1 in this)
+                //{
+                //    keys.Add(item1.Key.IetfLanguageTag);
+                //    yield return item1.Value;
+                //}
+
+                //foreach (var item2 in _availableCultures)
+                //{
+                //    if (keys.Add(item2.IetfLanguageTag))
+                //    {
+                //        //var b = this.GetNew(item1.Key, item2.Key);
+                //        //b.Culture = item;
+                //        //b.IsDirty = true;
+                //        //b.Local = true;
+                //        //b.Value = String.Empty;
+
+                //        //item2.Value.Add(b);
+
+                //        yield return b;
+                //    }
+                //}
+
+
+            }
+
+        }
 
     }
-
-
 
 }
 

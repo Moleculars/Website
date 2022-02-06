@@ -12,29 +12,36 @@ namespace Bb.MolecularSite.DataGrid
         [Inject]
         public ITranslateService TranslateService { get; set; }
 
+
         public ObjectDescriptor Descriptor { get; set; }
 
 
         [Inject]
         public IServiceProvider ServiceProvider { get; set; }
 
+
         [Parameter]
-        public List<T> Datas { get; set; }
+        public List<T> DataSource { get; set; }
+
+
 
         protected override Task OnInitializedAsync()
         {
+            HashSet<string> _toExclude = new HashSet<string>();
             this.Descriptor = new ObjectDescriptor(null, typeof(TranslatedKeyLabel), TranslateService, ServiceProvider);
+            this.Descriptor.PropertyFilter = (p) => !_toExclude.Contains(p.PropertyDescriptor.Name);
             this.Descriptor.Analyze();
-
             var result = base.OnInitializedAsync();
             return result;
         }
 
         public IEnumerable<PropertyObjectDescriptor> Headings()
         {
+
             if (this.Descriptor != null && this.Descriptor?.Items != null)
                 foreach (PropertyObjectDescriptor item in this.Descriptor.Items)
                     yield return item;
+
         }
 
         public IEnumerable<T> Rows
@@ -42,8 +49,8 @@ namespace Bb.MolecularSite.DataGrid
             get
             {
                 if (this.Descriptor != null)
-                    if (Datas != null)
-                        foreach (T item in Datas)
+                    if (DataSource != null)
+                        foreach (T item in DataSource)
                         {
                             this.Descriptor.Instance = item;
                             yield return item;

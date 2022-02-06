@@ -6,6 +6,7 @@ using Bb.Sql;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace Bb.Translations
 {
@@ -16,9 +17,15 @@ namespace Bb.Translations
     public class TranslationConfiguration
     {
 
+
         public TranslationConfiguration(InitialeConnectionStringSetting initialeConnectionStringSetting)
         {
             this._settings = initialeConnectionStringSetting;
+            this.Cultures = new List<CultureInfo>()
+            {
+                CultureInfo.GetCultureInfo("en-US"),
+                CultureInfo.GetCultureInfo("fr-FR"),
+            };
         }
 
 
@@ -26,6 +33,9 @@ namespace Bb.Translations
         [DefaultValue("Server=.;Database=BaseWebsite;Integrated Security=SSPI;Encrypt=true; TrustServerCertificate=true;")]
         public string TableName { get; set; } = "translations";
 
+
+        [ListProvider(typeof(CultureProviderList))]
+        public List<CultureInfo> Cultures { get; set; }
 
 
         public ConnectionStringSetting GetConnection()
@@ -37,4 +47,5 @@ namespace Bb.Translations
         private readonly InitialeConnectionStringSetting _settings;
 
     }
+
 }

@@ -32,7 +32,6 @@ namespace Bb.WebClient.Startings
 
         public ExposedTypeRepository ExposedTypes { get; }
 
-        public IConfigurationBuilder? ConfigurationBuilder { get; set; }
 
         public IConfigurationRoot? InitialConfigurationRoot { get; set; }
 

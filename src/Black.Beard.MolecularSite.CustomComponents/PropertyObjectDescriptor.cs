@@ -1,12 +1,13 @@
 ﻿using Bb.ComponentModel.DataAnnotations;
 using Bb.ComponentModel.Translations;
+using Bb.MolecularSite.PropertyGridComponent;
 using Bb.WebClient.UIComponents;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
-namespace Bb.MolecularSite.PropertyGridComponent
+namespace Bb.MolecularSite
 {
 
     public class PropertyObjectDescriptor
@@ -17,46 +18,65 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
             _strategies = new Dictionary<Type, StrategyEditor>();
 
-            _strategies.Add(typeof(char), new StrategyEditor(PropertyKingView.Char, typeof(ComponentChar)));
-            _strategies.Add(typeof(string), new StrategyEditor(PropertyKingView.String, typeof(ComponentString)));
-            _strategies.Add(typeof(bool), new StrategyEditor(PropertyKingView.Bool, typeof(ComponentBool)));
-            _strategies.Add(typeof(bool?), new StrategyEditor(PropertyKingView.Bool, typeof(ComponentBool)));
+            _strategies.Add(typeof(char), new StrategyEditor(PropertyKingView.Char, typeof(ComponentChar), () => ' '));
+            _strategies.Add(typeof(string), new StrategyEditor(PropertyKingView.String, typeof(ComponentString), () => string.Empty));
+            _strategies.Add(typeof(bool), new StrategyEditor(PropertyKingView.Bool, typeof(ComponentBool), () => true));
+            _strategies.Add(typeof(bool?), new StrategyEditor(PropertyKingView.Bool, typeof(ComponentBool), () => true));
 
-            _strategies.Add(typeof(Int16), new StrategyEditor(PropertyKingView.Int16, typeof(ComponentInt16)));
-            _strategies.Add(typeof(Int16?), new StrategyEditor(PropertyKingView.Int16, typeof(ComponentInt16)));
+            _strategies.Add(typeof(Int16), new StrategyEditor(PropertyKingView.Int16, typeof(ComponentInt16), () => 0));
+            _strategies.Add(typeof(Int16?), new StrategyEditor(PropertyKingView.Int16, typeof(ComponentInt16), () => 0));
 
-            _strategies.Add(typeof(Int32), new StrategyEditor(PropertyKingView.Int32, typeof(ComponentInt32)));
-            _strategies.Add(typeof(Int32?), new StrategyEditor(PropertyKingView.Int32, typeof(ComponentInt32)));
+            _strategies.Add(typeof(Int32), new StrategyEditor(PropertyKingView.Int32, typeof(ComponentInt32), () => 0));
+            _strategies.Add(typeof(Int32?), new StrategyEditor(PropertyKingView.Int32, typeof(ComponentInt32), () => 0));
 
-            _strategies.Add(typeof(Int64), new StrategyEditor(PropertyKingView.Int64, typeof(ComponentInt64)));
-            _strategies.Add(typeof(Int64?), new StrategyEditor(PropertyKingView.Int64, typeof(ComponentInt64)));
+            _strategies.Add(typeof(Int64), new StrategyEditor(PropertyKingView.Int64, typeof(ComponentInt64), () => 0));
+            _strategies.Add(typeof(Int64?), new StrategyEditor(PropertyKingView.Int64, typeof(ComponentInt64), () => 0));
 
-            _strategies.Add(typeof(UInt16), new StrategyEditor(PropertyKingView.UInt16, typeof(ComponentUInt16)));
-            _strategies.Add(typeof(UInt16?), new StrategyEditor(PropertyKingView.UInt16, typeof(ComponentUInt16)));
+            _strategies.Add(typeof(UInt16), new StrategyEditor(PropertyKingView.UInt16, typeof(ComponentUInt16), () => 0));
+            _strategies.Add(typeof(UInt16?), new StrategyEditor(PropertyKingView.UInt16, typeof(ComponentUInt16), () => 0));
 
-            _strategies.Add(typeof(UInt32), new StrategyEditor(PropertyKingView.UInt32, typeof(ComponentUInt32)));
-            _strategies.Add(typeof(UInt32?), new StrategyEditor(PropertyKingView.UInt32, typeof(ComponentInt32)));
+            _strategies.Add(typeof(UInt32), new StrategyEditor(PropertyKingView.UInt32, typeof(ComponentUInt32), () => 0));
+            _strategies.Add(typeof(UInt32?), new StrategyEditor(PropertyKingView.UInt32, typeof(ComponentInt32), () => 0));
 
-            _strategies.Add(typeof(UInt64), new StrategyEditor(PropertyKingView.UInt64, typeof(ComponentUInt64)));
-            _strategies.Add(typeof(UInt64?), new StrategyEditor(PropertyKingView.UInt64, typeof(ComponentInt64)));
+            _strategies.Add(typeof(UInt64), new StrategyEditor(PropertyKingView.UInt64, typeof(ComponentUInt64), () => 0));
+            _strategies.Add(typeof(UInt64?), new StrategyEditor(PropertyKingView.UInt64, typeof(ComponentInt64), () => 0));
 
-            _strategies.Add(typeof(DateTime), new StrategyEditor(PropertyKingView.Date, typeof(ComponentDate)));
-            _strategies.Add(typeof(DateTime?), new StrategyEditor(PropertyKingView.Date, typeof(ComponentDate)));
+            _strategies.Add(typeof(DateTime), new StrategyEditor(PropertyKingView.Date, typeof(ComponentDate), () => DateTime.UtcNow));
+            _strategies.Add(typeof(DateTime?), new StrategyEditor(PropertyKingView.Date, typeof(ComponentDate), () => DateTime.UtcNow));
 
-            _strategies.Add(typeof(DateTimeOffset), new StrategyEditor(PropertyKingView.DateOffset, typeof(ComponentDateOffset)));
-            _strategies.Add(typeof(DateTimeOffset?), new StrategyEditor(PropertyKingView.DateOffset, typeof(ComponentDateOffset)));
+            _strategies.Add(typeof(DateTimeOffset), new StrategyEditor(PropertyKingView.DateOffset, typeof(ComponentDateOffset), () => DateTimeOffset.UtcNow));
+            _strategies.Add(typeof(DateTimeOffset?), new StrategyEditor(PropertyKingView.DateOffset, typeof(ComponentDateOffset), () => DateTimeOffset.UtcNow));
 
-            _strategies.Add(typeof(TimeSpan), new StrategyEditor(PropertyKingView.Time, typeof(ComponentTime)));
-            _strategies.Add(typeof(TimeSpan?), new StrategyEditor(PropertyKingView.Time, typeof(ComponentTime)));
+            _strategies.Add(typeof(TimeSpan), new StrategyEditor(PropertyKingView.Time, typeof(ComponentTime), () => TimeSpan.FromMinutes(0)));
+            _strategies.Add(typeof(TimeSpan?), new StrategyEditor(PropertyKingView.Time, typeof(ComponentTime), () => TimeSpan.FromMinutes(0)));
 
-            _strategies.Add(typeof(float), new StrategyEditor(PropertyKingView.Float, typeof(ComponentFloat)));
-            _strategies.Add(typeof(float?), new StrategyEditor(PropertyKingView.Float, typeof(ComponentFloat)));
+            _strategies.Add(typeof(float), new StrategyEditor(PropertyKingView.Float, typeof(ComponentFloat), () => 0f));
+            _strategies.Add(typeof(float?), new StrategyEditor(PropertyKingView.Float, typeof(ComponentFloat), () => 0f));
 
-            _strategies.Add(typeof(double), new StrategyEditor(PropertyKingView.Double, typeof(ComponentDouble)));
-            _strategies.Add(typeof(double?), new StrategyEditor(PropertyKingView.Double, typeof(ComponentDouble)));
+            _strategies.Add(typeof(double), new StrategyEditor(PropertyKingView.Double, typeof(ComponentDouble), () => 0d));
+            _strategies.Add(typeof(double?), new StrategyEditor(PropertyKingView.Double, typeof(ComponentDouble), () => 0d));
 
-            _strategies.Add(typeof(decimal), new StrategyEditor(PropertyKingView.Decimal, typeof(ComponentDecimal)));
-            _strategies.Add(typeof(decimal?), new StrategyEditor(PropertyKingView.Decimal, typeof(ComponentDecimal)));
+            _strategies.Add(typeof(decimal), new StrategyEditor(PropertyKingView.Decimal, typeof(ComponentDecimal), () => 0));
+            _strategies.Add(typeof(decimal?), new StrategyEditor(PropertyKingView.Decimal, typeof(ComponentDecimal), () => 0));
+
+
+
+
+
+        }
+
+        public static bool Create(Type type, out object? result)
+        {
+
+            result = null;
+
+            if (_strategies.TryGetValue(type, out var strategies))
+            {
+                result = strategies.CreateInstance();
+                return true;
+            }
+
+            return false;
 
         }
 
@@ -113,6 +133,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                         this.EditorType = typeof(ComponentList);
                     }
 
+            this.IsValid = this.EditorType != null;
 
         }
 
@@ -122,7 +143,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
             get
             {
 
-                var result = PropertyDescriptor.GetValue(Parent.Instance);
+                object result = PropertyDescriptor.GetValue(Parent.Instance);
 
                 if (result == null)
                     return this.DefaultValue;
@@ -134,10 +155,15 @@ namespace Bb.MolecularSite.PropertyGridComponent
             set
             {
                 PropertyDescriptor.SetValue(Parent.Instance, value);
+                PropertyHasChanged();
             }
 
         }
 
+        public void PropertyHasChanged()
+        {
+            this.Parent.HasChanged(this);
+        }
 
         internal void AnalyzeAttributes()
         {
@@ -276,7 +302,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
         }
 
 
-        public Type Type { get; }
+        public Type Type { get; internal set; }
 
         public IDictionary<string, object> Parameters { get; set; }
 
@@ -335,48 +361,30 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public PropertyDescriptor PropertyDescriptor { get; set; }
 
+        public bool IsValid { get; }
+
         private readonly List<ValidationAttribute> _constraints;
         private static Dictionary<Type, StrategyEditor> _strategies;
 
     }
 
-    //public class TypeSwitch
-    //{
-    //    public TypeSwitch Case<T>(Action<T> action)
-    //    {
-    //        matches.Add(typeof(T), (x) => action((T)x));
-    //        return this;
-    //    }
-    //    public void Switch(object x) { matches[x.GetType()](x); }
-    //    private Dictionary<Type, Action<object>> matches = new Dictionary<Type, Action<object>>();
-    //}
-
-
-    //public class TypeSwitch<T1>
-    //{
-    //    public TypeSwitch<T1> Case<T>(Func<T, T1> action)
-    //    {
-    //        matches.Add(typeof(T), (x) => action((T)x));
-    //        return this;
-    //    }
-    //    public void Switch(object x) { matches[x.GetType()](x); }
-    //    private Dictionary<Type, Func<object, T1>> matches = new Dictionary<Type, Func<object, T1>>();
-    //}
-
-
 
     public class StrategyEditor
     {
 
-        public StrategyEditor(PropertyKingView propertyKingView, Type componentView)
+        public StrategyEditor(PropertyKingView propertyKingView, Type componentView, Func<object> createInstance)
         {
             this.PropertyKingView = propertyKingView;
             this.ComponentView = componentView;
+            this.CreateInstance = createInstance;
         }
 
         public PropertyKingView PropertyKingView { get; }
 
         public Type ComponentView { get; }
+
+        public Func<object> CreateInstance { get; }
+
 
     }
 
@@ -391,7 +399,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public PropertyDescriptor Property { get; set; }
 
-        
+
         public ITranslateService TranslateService { get; set; }
 
 
@@ -416,7 +424,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 };
 
             }
-            
+
 
         }
 

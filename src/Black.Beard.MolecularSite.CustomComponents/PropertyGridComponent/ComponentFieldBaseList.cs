@@ -1,5 +1,6 @@
 ﻿using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -9,20 +10,11 @@ namespace Bb.MolecularSite.PropertyGridComponent
 {
 
 
-    public partial class ComponentFieldBaseList : ComponentFieldBase, INotifyCollectionChanged
+    public partial class ComponentFieldBaseList : ComponentFieldBase
     {
 
 
-        public void Apply()
-        {
-            if (Property != null)
-            {
-                Property.Value = _value;
-            }
-        }
-
-
-        public void Reset()
+        protected override void PropertyChange()
         {
 
             if (Property != null)
@@ -31,18 +23,16 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 try
                 {
 
-                    _value = Property.Value;
+                    var _value = Property.Value;
 
                     if (_value == null)
-                    {
-                        _value = Activator.CreateInstance(Property.Type);
-                        Property.Value = _value;
-                    }
+                        Property.Value = _value = Activator.CreateInstance(Property.Type);
 
                     this.Descriptor = new ObjectDescriptor(null, this.Property.SubType, this.Property.Parent.TranslateService, this.Property.Parent.ServiceProvider);
                     this.Descriptor.Analyze();
+
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -51,14 +41,17 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         }
 
+        protected void PropertyHasChanged(PropertyObjectDescriptor obj)
+        {
+            StateHasChanged();
+        }
+
         public IEnumerable<PropertyObjectDescriptor> Headings()
         {
 
-            if (this.Descriptor == null)
-                Reset();
-
-            foreach (PropertyObjectDescriptor item in this.Descriptor.Items)
-                yield return item;
+            if (this.Descriptor != null)
+                foreach (PropertyObjectDescriptor item in this.Descriptor.Items)
+                    yield return item;
 
         }
 
@@ -66,12 +59,10 @@ namespace Bb.MolecularSite.PropertyGridComponent
         {
             get
             {
-                if (this.Descriptor == null)
-                    Reset();
 
                 var items = Property.Value as IEnumerable;
 
-                if (items != null)
+                if (items != null && this.Descriptor != null)
                     foreach (object item in items)
                     {
                         this.Descriptor.Instance = item;
@@ -81,25 +72,51 @@ namespace Bb.MolecularSite.PropertyGridComponent
         }
 
 
-        public void Add()
+        public async void Add()
         {
-            var newItem = Activator.CreateInstance(Property.SubType);
-            var method = this.Property.Type.GetMethod("Add");
-            method.Invoke(_value, new object[] { newItem });
 
-            if (this.CollectionChanged != null)
-                this.CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem));
+            object newItem;
 
+            if (PropertyObjectDescriptor.Create(Property.SubType, out newItem))
+            {
+
+            }
+            else if (Property.SubType.IsClass)
+                newItem = Activator.CreateInstance(Property.SubType);
+
+            if (newItem != null)
+            {
+                var value = Property.Value;
+                var method = this.Property.Type.GetMethod("Add");
+                method.Invoke(value, new object[] { newItem });
+
+            }
+
+            CurrentItem = newItem;
             PropertyChange();
+            StateHasChanged();
 
         }
 
-        public void Del(object item)
+        public async void Del(object item)
         {
             CurrentItem = item;
+            StateHasChanged();
+            bool? result = await mbox.Show();
         }
 
-        public void Edit(object item)
+        protected async void Remove()
+        {
+            var value = Property.Value;
+            var method = this.Property.Type.GetMethod("Remove");
+            method.Invoke(value, new object[] { CurrentItem });
+            CurrentItem = new object();
+            Property.PropertyHasChanged();
+            PropertyChange();
+            StateHasChanged();
+        }
+
+        public async void Edit(object item)
         {
             CurrentItem = item;
             StateHasChanged();
@@ -109,9 +126,9 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         public ObjectDescriptor Descriptor { get; set; }
 
-        private object _value;
+        protected MudMessageBox mbox { get; set; }
 
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
     }
 
 

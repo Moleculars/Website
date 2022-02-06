@@ -11,24 +11,37 @@ namespace Bb.Configurations.Builders
     public class ConfigurationBuilder : IApplicationBuilderInitializer
     {
 
+
         public ConfigurationBuilder()
         {
 
         }
 
-        public void Initialize(IServiceCollection services, IConfiguration configuration)
+
+        public bool CanInitialize(WebApplicationBuilder builder)
         {
+            return true;
+        }
+
+
+        public void Initialize(WebApplicationBuilder builder)
+        {
+
+            var services = builder.Services;
+         
             services.AddSingleton(typeof(ServiceConfigurationRepository));
+
         }
 
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
+        public bool CanConfigure(IApplicationBuilder app)
         {
-
+            return true;
         }
 
 
-        public void Configure(IApplicationBuilder app, IHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
 
         }

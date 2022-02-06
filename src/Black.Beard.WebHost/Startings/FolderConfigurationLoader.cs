@@ -35,7 +35,7 @@ namespace Bb.WebHost.Startings
                         {
                             ConfigLoaded = true;
                             Trace.WriteLine($"add configuration file '{file.FullName}'", TraceLevel.Info.ToString());
-                            builder.ConfigurationBuilder.AddJsonFile(file.FullName, optional: false, reloadOnChange: true);
+                            builder.Builder.Configuration.AddJsonFile(file.FullName, optional: false, reloadOnChange: true);
                         }
                 }
                 else

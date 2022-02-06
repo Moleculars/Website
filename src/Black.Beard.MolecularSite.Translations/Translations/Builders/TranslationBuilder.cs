@@ -20,21 +20,35 @@ namespace Bb.Translations.Builders
 
         }
 
-        public void Initialize(IServiceCollection services, IConfiguration configuration)
+        public bool CanInitialize(WebApplicationBuilder builder)
         {
+            return true;
+        }
+
+        public void Initialize(WebApplicationBuilder builder)
+        {
+            //var services = builder.Services;
             //services.AddSingleton(typeof(ITranslateService));
             //services.AddSingleton(typeof(ServiceConfigurationRepository));
+
+
+            //services.AddHttpClient<TranslateServiceByRemote, TranslateServiceByRemote>(client =>
+            //{
+            //    client.BaseAddress = new Uri("https://api-free.deepl.com/v2/translate");
+            //});
+
         }
 
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
+     
+
+        public bool CanConfigure(IApplicationBuilder app)
         {
-
-
+            return true;
         }
 
-
-        public void Configure(IApplicationBuilder app, IHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
 
         }

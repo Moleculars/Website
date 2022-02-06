@@ -31,8 +31,16 @@ namespace Bb.WebHost.ApplicationBuilders
                 ;
 
             foreach (var item in _translateService.AvailableCultures)
-                menuLanguages.Add(new UIComponent(null, "l:en-us, d:" + item.EnglishName));
+            {
 
+                var display = string.Empty;
+                if (item.IetfLanguageTag == "en-US")
+                    display = $"p:menuLanguage, k:{item.DisplayName},l:en-us, d:language {item.EnglishName}";
+                else
+                    display = $"p:menuLanguage, k:{item.DisplayName},l:en-us, d:language {item.EnglishName}, l1:{item.IetfLanguageTag},d1:{item.NativeName}";
+                var d = (TranslatedKeyLabel)display;
+                menuLanguages.Add(new UIComponent(null, display));
+            }
             return 0;
 
         }

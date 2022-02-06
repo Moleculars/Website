@@ -1,6 +1,5 @@
 ﻿
 using Bb.ComponentModel.Translations;
-using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -15,6 +14,12 @@ namespace Bb.MolecularSite.PropertyGridComponent
 
         [Inject]
         public IServiceProvider ServiceProvider { get; set; }
+
+        [Parameter]
+        public Func<PropertyObjectDescriptor, bool> ExcludeProperties { get; set; }
+
+        [Parameter]
+        public Action<PropertyObjectDescriptor> PropertyHasChanged { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -31,11 +36,25 @@ namespace Bb.MolecularSite.PropertyGridComponent
                 if (value != null)
                 {
                     _selectedObject = value;
-                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService, ServiceProvider);
+                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService, ServiceProvider)
+                    {
+                        PropertyHasChanged = this.PropertyHasChanged,
+                    };
+                    if (ExcludeProperties != null)
+                        d.PropertyFilter = ExcludeProperties;
                     d.Analyze();
                     this.Descriptor = d;
+                    this.Descriptor.PropertyHasChanged = this.SubPropertyHasChanged;
                 }
+                StateHasChanged();
             }
+        }
+
+        private void SubPropertyHasChanged(PropertyObjectDescriptor obj)
+        {
+            StateHasChanged();
+            if (PropertyHasChanged != null)
+                PropertyHasChanged(obj);
         }
 
         public ObjectDescriptor Descriptor { get; set; }
@@ -45,6 +64,7 @@ namespace Bb.MolecularSite.PropertyGridComponent
         string[] errors = { };
         MudForm form;
         private object _selectedObject;
+
     }
 
 

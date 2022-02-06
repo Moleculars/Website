@@ -76,6 +76,9 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
                     Sql.GetParameter("value", settings.Value)
                    );
 
+            if (HasChanged != null)
+                HasChanged(this, new ConfigurationHasChangedEventArgs() { Item = null });
+
             return results.InpactedObject > 0;
 
         }
@@ -93,6 +96,7 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
 
             if (results.InpactedObject > 0)
             {
+
                 var newConfig = LoadConfiguration(settings.SectionName);
                 if (newConfig != null)
                 {
@@ -100,21 +104,25 @@ namespace Bb.Storages.ConfigurationProviders.SqlServer
                     settings.Version = newConfig.Version;
                     settings.Value = newConfig.Value;
                     settings.IsDirty = false;
+                    
+                    if (HasChanged != null)
+                        HasChanged(this, new ConfigurationHasChangedEventArgs() { Item = newConfig });
+
                     return true;
                 }
             }
-
-
 
             return false;
 
         }
 
+        public EventHandler<ConfigurationHasChangedEventArgs> HasChanged { get; set; }
+
 
         public ConfigurationSettings? LoadConfiguration(string sectionName)
         {
 
-            var queryString = GetSql(_sql_selectAll) + "WHERE [SectionName] = @sectionName";
+            var queryString = GetSql(_sql_selectAll) + " WHERE [SectionName] = @sectionName";
             var argument = Sql.GetParameter("sectionName", sectionName);
 
             foreach (var item in Sql.Read(queryString, argument))
