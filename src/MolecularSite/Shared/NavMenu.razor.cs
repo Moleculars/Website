@@ -1,4 +1,5 @@
 ﻿using Bb.ComponentModel.Translations;
+using Bb.UIComponents;
 using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
@@ -15,13 +16,16 @@ namespace MolecularSite.Shared
         [Inject]
         private ITranslateService? translateService { get; set; }
 
+        [Inject]
+        private GuardMenuProvider? GuardMenuProvider { get; set; }
+
         public List<DynamicServerMenu>? Menus { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
 
             Menus = new List<DynamicServerMenu>();
-            var menuBuilder = new MenuConverter(translateService);
+            var menuBuilder = new MenuConverter(translateService, GuardMenuProvider);
             if (uIService != null)
             {
                 var m = await uIService.GetUI(UIService.LeftMenu);

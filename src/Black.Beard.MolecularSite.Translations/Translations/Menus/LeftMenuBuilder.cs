@@ -1,9 +1,10 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.Services;
+using Bb.Translations.Pages;
 using Bb.WebClient.UIComponents;
 using Bb.WebClient.UIComponents.Glyphs;
 using Microsoft.AspNetCore.Components.Routing;
-using System;
 
 namespace Bb.Translations.Menus
 {
@@ -28,7 +29,8 @@ namespace Bb.Translations.Menus
             var home = service.GetMenu(UIService.LeftMenu, this._guidHome);       
 
             service.GetMenuOrCreate(UIService.LeftMenu, guidTranslations, "p:MenuLeft,k:TranslationMenu,l:en-us,d:Translations")
-                .SetAction(NavLinkMatch.Prefix, "/Translations")
+                .SetEnabledGuard<GuardMenuIdentity>(c => c.IsIdentified())
+                .SetAction(NavLinkMatch.Prefix, typeof(TranslationsComponentView))
                 .SetKeyboardArrowDown(false)
                 .SetIcon(GlyphFilled.Translate)
                 ;

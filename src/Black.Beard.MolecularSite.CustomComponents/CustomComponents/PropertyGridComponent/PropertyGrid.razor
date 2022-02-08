@@ -1,0 +1,32 @@
+﻿@page "/PropertyGrid"
+@using MudBlazor
+@using Bb.ComponentModel.Translations
+
+<MudCard>
+    <MudItem>
+        <MudPaper>
+
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                @if (Descriptor != null && Descriptor.Items != null)
+                {
+
+                    <MudCard>
+                        @foreach (TranslatedKeyLabel category in Descriptor.Categories())
+                        {
+
+                            <MudExpansionPanel Text="@TranslateService.Translate(category)" IsExpanded="true">
+                                @foreach (PropertyObjectDescriptor property in Descriptor.ItemsByCategories(category))
+                                {
+                                    <DynamicComponent Type="@property.EditorType" Parameters="@property.Parameters" />
+                                }
+                            </MudExpansionPanel>
+
+                        }
+                    </MudCard>
+
+                }
+            </MudForm>
+
+        </MudPaper>
+    </MudItem>
+</MudCard>

@@ -106,7 +106,22 @@ namespace Bb.WebHost.Startings
 
             // Inject individual types in the ioc
             foreach (var item in self.Builders)
-                self.InstancesBuilders.Add((IApplicationBuilderInitializer)Activator.CreateInstance(item));
+            {
+
+                IApplicationBuilderInitializer instance;
+                List<object> args = new List<object>();
+
+                var ctor = item.GetConstructors()[0];
+                var parameters = ctor.GetParameters();
+                foreach (var parameter in parameters)
+                    if (parameter.ParameterType == typeof(InitializationLoader))
+                        args.Add(self);
+
+                instance = (IApplicationBuilderInitializer)Activator.CreateInstance(item, args.ToArray());
+
+                self.InstancesBuilders.Add(instance);
+
+            }
 
             var builder = self.Builder;
 

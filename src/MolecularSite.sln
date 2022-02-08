@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commons", "Commons", "{7D63
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black.Beard.MolecularSite.Configurations", "Black.Beard.MolecularSite.Configurations\Black.Beard.MolecularSite.Configurations.csproj", "{6E656CCB-4C5E-48CD-86FF-073654292CFD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black.Beard.MolecularSite.CustomComponents", "Black.Beard.MolecularSite.CustomComponents\Black.Beard.MolecularSite.CustomComponents.csproj", "{429C9A03-4CBF-479D-ACAF-18A90FE4CE69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black.Beard.CustomComponents", "Black.Beard.MolecularSite.CustomComponents\Black.Beard.CustomComponents.csproj", "{429C9A03-4CBF-479D-ACAF-18A90FE4CE69}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black.Beard.Storages", "Black.Beard.Storages\Black.Beard.Storages.csproj", "{C346D99D-80A3-4671-815C-4A6CFE5F4C58}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToMigrates", "ToMigrates", "{1923BEB7-0E93-4C42-BC22-6FEFBD859723}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black.Beard.Configurations", "Black.Beard.Configurations\Black.Beard.Configurations.csproj", "{EB41901E-F56B-49C5-85C6-BED8B29662B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black.Beard.MolecularSite.IdentityIndividual", "Black.Beard.MolecularSite.IdentityIndividual\Black.Beard.MolecularSite.IdentityIndividual.csproj", "{B4040AFA-7CA5-47BF-932A-EADE74391739}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{EB41901E-F56B-49C5-85C6-BED8B29662B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB41901E-F56B-49C5-85C6-BED8B29662B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB41901E-F56B-49C5-85C6-BED8B29662B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4040AFA-7CA5-47BF-932A-EADE74391739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4040AFA-7CA5-47BF-932A-EADE74391739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4040AFA-7CA5-47BF-932A-EADE74391739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4040AFA-7CA5-47BF-932A-EADE74391739}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{DCED91F4-BAA5-4E8B-A0B3-B4F6710E065F} = {7D63C471-BB5F-4D50-A64A-81ED6D5BAD52}
 		{1923BEB7-0E93-4C42-BC22-6FEFBD859723} = {7D63C471-BB5F-4D50-A64A-81ED6D5BAD52}
 		{EB41901E-F56B-49C5-85C6-BED8B29662B8} = {1923BEB7-0E93-4C42-BC22-6FEFBD859723}
+		{B4040AFA-7CA5-47BF-932A-EADE74391739} = {DCED91F4-BAA5-4E8B-A0B3-B4F6710E065F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A75BD686-6B8B-4ED5-A90D-E271C7D9863F}

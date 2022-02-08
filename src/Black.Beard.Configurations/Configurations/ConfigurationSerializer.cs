@@ -16,16 +16,21 @@ namespace Bb.Configurations
             this._defaultMapper = (ConfigurationSubSerializer)services.GetService(typeof(ConfigurationJSonSerializer));
         }
 
-        public T Get<T>(Type type)
+        public T? Get<T>(Type? type)
         {
 
-            var item = (T)TypeDescriptor.CreateInstance(null, type, new Type[] { }, new object[] { });
+            if (type != null)
+            {
+                var item = (T)TypeDescriptor.CreateInstance(null, type, new Type[] { }, new object[] { });
 
-            var key = GetConfigurationKey(type);
+                var key = GetConfigurationKey(type);
 
-            Map(type, item, key);
+                Map(type, item, key);
 
-            return item;
+                return item;
+            }
+
+            return default(T);
 
         }
 

@@ -23,6 +23,12 @@ namespace Bb.WebClient.UIComponents
             this.Action = ActionReference.Default;
         }
 
+        public bool IsEmpty { get => this.Count == 0; }
+
+        public bool ViewGuard { get; set; }
+        public bool EnabledGuard { get; set; }
+
+
         public string? Display { get; set; }
 
         public Guid Uui { get; set; }

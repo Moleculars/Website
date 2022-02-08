@@ -1,6 +1,5 @@
 ﻿using Bb.ComponentModel.Translations;
 using Bb.MolecularSite.PropertyGridComponent;
-using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Components;
 
 namespace Bb.MolecularSite.DataGrid

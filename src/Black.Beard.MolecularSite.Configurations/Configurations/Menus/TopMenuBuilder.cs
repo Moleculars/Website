@@ -21,10 +21,7 @@ namespace Bb.Configurations.Menus
 
         public object Run(UIService service)
         {
-
-
             return 0;
-
         }
 
 

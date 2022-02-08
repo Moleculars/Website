@@ -2,6 +2,7 @@
 
 namespace Bb.WebClient.UIComponents
 {
+
     public class ActionReference
     {
 
@@ -12,7 +13,6 @@ namespace Bb.WebClient.UIComponents
         public static ActionReference Default { get; } = new ActionReference() { HRef = "\\", Match = NavLinkMatch.Prefix };
 
     }
-
 
 
 }

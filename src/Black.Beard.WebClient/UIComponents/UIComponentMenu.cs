@@ -1,4 +1,5 @@
 ﻿using Bb.ComponentModel.Translations;
+using Bb.UIComponents;
 using Microsoft.AspNetCore.Components.Routing;
 using System;
 
@@ -12,12 +13,20 @@ namespace Bb.WebClient.UIComponents
         {
 
             KeyboardArrowDown = true;
-
+            _viewGuards = new List<GuardContainer>();
+            _enabledGuards = new List<GuardContainer>();
         }
 
         public bool KeyboardArrowDown { get; private set; }
 
+
         public ActionReference? Action { get; private set; }
+
+
+        public IEnumerable<GuardContainer> ViewGuards { get => _viewGuards; }
+        public IEnumerable<GuardContainer> EnabledGuards { get => _enabledGuards; }
+
+
 
         public UIComponent SetKeyboardArrowDown(bool activated)
         {
@@ -25,17 +34,46 @@ namespace Bb.WebClient.UIComponents
             return this;
         }
 
-        public UIComponentMenu SetAction(NavLinkMatch match, string href)
+        public UIComponentMenu SetViewGuard<TIGuardMenu>(Func<TIGuardMenu, bool> evaluator)
+            where TIGuardMenu : IGuardMenu
         {
-            
-            this.Action = new ActionReference()
+
+            var guard = new GuardContainer<TIGuardMenu>(evaluator)
             {
-                Match = match,
-                HRef = href,
+
             };
+
+            this._viewGuards.Add(guard);
 
             return this;
 
+        }
+
+        public UIComponentMenu SetEnabledGuard<TIGuardMenu>(Func<TIGuardMenu, bool> evaluator)
+           where TIGuardMenu : IGuardMenu
+        {
+
+            var guard = new GuardContainer<TIGuardMenu>(evaluator)
+            {
+
+            };
+
+            this._enabledGuards.Add(guard);
+
+            return this;
+
+        }
+
+        public UIComponentMenu SetAction(NavLinkMatch match, Type type)
+        {
+            this.Action = this.Service.GetAction(match, type);
+            return this;
+        }
+
+        public UIComponentMenu SetAction(NavLinkMatch match, string route)
+        {
+            this.Action = this.Service.GetAction(match, route);
+            return this;
         }
 
         public UIComponentMenu SetActionMatchAll()
@@ -51,6 +89,11 @@ namespace Bb.WebClient.UIComponents
 
 
         }
+
+        private readonly List<GuardContainer> _viewGuards;
+        private readonly List<GuardContainer> _enabledGuards;
+
+
     }
 
 

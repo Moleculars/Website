@@ -1,7 +1,5 @@
-﻿using MudBlazor.Services;
-using Bb.WebHost.Startings;
+﻿using Bb.WebHost.Startings;
 using Microsoft.OpenApi.Models;
-using Bb.Middleware;
 
 namespace MolecularSite.CommandLines
 {
@@ -18,11 +16,11 @@ namespace MolecularSite.CommandLines
         public void RunSite()
         {
 
-        
+            AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+
+
             var builder = WebApplication.CreateBuilder();                     
-
             var loader = builder.LoadConfiguration(this._args);
-
 
             var useSwagger = loader != null
                 && loader.InitialConfiguration != null
@@ -74,24 +72,17 @@ namespace MolecularSite.CommandLines
                 });
             }
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                // The default HSTS value is 30 days. You may want to change
-                // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            else
-            {
-                app
-                    .AppendMiddleware<LoggingSupervisionMiddleware>();
-
-            }
-
-
             app.Run();
+
         }
 
+        private void CurrentDomain_FirstChanceException(object? sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        {
+            if (e.Exception is NullReferenceException ex)
+            {
+
+            }
+        }
 
         private readonly string[] _args;
 

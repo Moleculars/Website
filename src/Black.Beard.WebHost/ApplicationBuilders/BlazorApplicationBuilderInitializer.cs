@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Bb.WebHost.Startings;
 using Bb.Middleware;
 using Bb.WebClient.Startings;
+using Microsoft.Extensions.Hosting;
 
 namespace Bb.WebHost.ApplicationBuilders
 {
@@ -29,6 +30,7 @@ namespace Bb.WebHost.ApplicationBuilders
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMudServices();
+            services.AddHttpContextAccessor();
         }
 
 
@@ -49,6 +51,19 @@ namespace Bb.WebHost.ApplicationBuilders
             a.MapBlazorHub();
             a.MapFallbackToPage("/_Host");
 
+            // Configure the HTTP request pipeline.
+            if (!a.Environment.IsDevelopment())
+            {
+                // The default HSTS value is 30 days. You may want to change
+                // this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+            else
+            {
+
+                a.AppendMiddleware<LoggingSupervisionMiddleware>();
+
+            }
 
             var loader = app.ApplicationServices.GetService(typeof(InitializationLoader)) as InitializationLoader;
 

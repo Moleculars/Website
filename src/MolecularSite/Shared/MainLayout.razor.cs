@@ -1,9 +1,9 @@
 ﻿using Bb.ComponentModel.Translations;
+using Bb.UIComponents;
 using Bb.WebClient.UIComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
-using System.Reflection;
 
 namespace MolecularSite.Shared
 {
@@ -22,103 +22,41 @@ namespace MolecularSite.Shared
         [Inject]
         private ITranslateService? translateService { get; set; }
 
+
+        [Inject]
+        private GuardMenuProvider? guardMenuProvider { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             
-            menus = new List<DynamicServerMenu>();
-            var menuBuilder = new MenuConverter(translateService);
+            menusLeft = new List<DynamicServerMenu>();
+            var menuBuilder = new MenuConverter(translateService, guardMenuProvider);
             if (UIService != null)
             {
-                var m = await UIService.GetUI(UIService.TopMenu);
+                var m = await UIService.GetUI(UIService.TopLeftMenu);
                 if (m != null)
                     foreach (var m1 in m)
-                        menus.Add((DynamicServerMenu)menuBuilder.Convert(m1));
+                        menusLeft.Add((DynamicServerMenu)menuBuilder.Convert(m1));
+            }
+
+            menusRight = new List<DynamicServerMenu>();
+            menuBuilder = new MenuConverter(translateService, guardMenuProvider);
+            if (UIService != null)
+            {
+                var m = await UIService.GetUI(UIService.TopRightMenu);
+                if (m != null)
+                    foreach (var m1 in m)
+                        menusRight.Add((DynamicServerMenu)menuBuilder.Convert(m1));
+
             }
         }
 
         bool _drawerOpen = false;
-        private List<DynamicServerMenu>? menus;
+        private List<DynamicServerMenu>? menusLeft;
+        private List<DynamicServerMenu>? menusRight;
 
+           
 
-        //private Task GetRouteUrlWithAuthorizeAttribute()
-        //{
-
-        //    // Get all the components whose base class is ComponentBase
-        //    var components = Assembly.GetExecutingAssembly()
-        //                           .ExportedTypes
-        //                           .Where(t =>
-        //                          t.IsSubclassOf(typeof(ComponentBase)));
-
-        //    foreach (var component in components)
-        //    {
-        //        // Print the name (Type) of the Component
-        //        Console.WriteLine(component.ToString());
-
-        //        // Now check if this component contains the Authorize attribute
-        //        var allAttributes = component.GetCustomAttributes(inherit: true);
-
-        //        var authorizeDataAttributes =
-        //                        allAttributes.OfType<IAuthorizeData>().ToArray();
-
-        //        // If it does, show this to us... 
-        //        foreach (var authorizeData in authorizeDataAttributes)
-        //        {
-
-        //            Console.WriteLine(authorizeData.ToString());
-        //        }
-        //    }
-
-        //    return Task.CompletedTask;
-
-        //}
-
-
-    }
-
-    public static class PrerenderRouteHelper
-    {
-
-        /// <summary>
-        /// Creates a <see cref="PrerenderRouteHelper"/> from the <see cref="RouteAttribute"/>s
-        /// decorating components in the provided assembly
-        /// </summary>
-        public static List<string> GetRoutes(Assembly assembly)
-        {
-            // Get all the components whose base class is ComponentBase
-            var components = assembly
-                .ExportedTypes
-                .Where(t => t.IsSubclassOf(typeof(ComponentBase)));
-
-            return components
-                .Select(component => GetRouteFromComponent(component))
-                .Where(config => config is not null)
-                .ToList();
-        }
-
-        private static string GetRouteFromComponent(Type component)
-        {
-            var attributes = component.GetCustomAttributes(inherit: true);
-
-            var routeAttribute = attributes.OfType<RouteAttribute>().FirstOrDefault();
-
-            if (routeAttribute is null)
-                return String.Empty;
-
-            var route = routeAttribute.Template;
-
-            if (string.IsNullOrEmpty(route))
-            {
-                throw new Exception($"RouteAttribute in component '{component}' has empty route template");
-            }
-
-            // Don't support tokens at this point
-            if (route.Contains('{'))
-            {
-                throw new Exception($"RouteAttribute for component '{component}' contains route values. Route values are invalid for prerendering");
-            }
-
-            return route;
-        }
     }
 
 

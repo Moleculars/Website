@@ -13,19 +13,18 @@ namespace Bb.Configurations.Pages
 
 
         [Inject]
-        public ITranslateService TranslateService { get; set; }
-
+        public ITranslateService? TranslateService { get; set; }
 
         [Inject]
         public ServiceConfigurationRepository? ServiceConfigurations { get; set; }
 
         [Inject]
-        public ConfigurationSerializer ConfigurationSerializer { get; set; }
+        public ConfigurationSerializer? ConfigurationSerializer { get; set; }
 
 
         public ItemEnumerable[]? Configurations { get; set; }
 
-        public object CurrentItem { get; set; }
+        public object? CurrentItem { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -40,27 +39,26 @@ namespace Bb.Configurations.Pages
         }
 
 
-        
-
-
         public void Selected(ItemEnumerable type)
         {
 
-            if (ServiceConfigurations != null)
-                if (type is ItemEnumerable<Type> t)
-                {
-                    var configuration = ConfigurationSerializer.Get<object>(t.Tag);
-                    CurrentItem = configuration;
-                }
+            if (ServiceConfigurations != null && ConfigurationSerializer != null)
+                if (type is ItemEnumerable<Type> t && t != null)
+                    CurrentItem = ConfigurationSerializer.Get<object>(t.Tag);
 
         }
 
         public void Save()
         {
-            if (ServiceConfigurations != null)
+            if (ServiceConfigurations != null && CurrentItem != null)
             {
-                var sectionName = ConfigurationSerializer.GetConfigurationKey(CurrentItem.GetType());
-                ServiceConfigurations.Save(CurrentItem, sectionName);
+                var sectionName = ConfigurationSerializer?.GetConfigurationKey(CurrentItem.GetType());
+                if (!string.IsNullOrEmpty(sectionName))
+                    ServiceConfigurations.Save(CurrentItem, sectionName);
+                else
+                {
+
+                }
             }
         }
 

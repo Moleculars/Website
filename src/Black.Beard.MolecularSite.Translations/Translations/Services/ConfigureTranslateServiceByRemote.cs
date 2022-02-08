@@ -1,6 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
-using Bb.MolecularSite;
+using Bb.CustomComponents;
 using System.ComponentModel;
 
 namespace Bb.Translations.Services

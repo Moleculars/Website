@@ -1,11 +1,12 @@
 ﻿@using Bb.WebClient.UIComponents
- 
-    
-    @if(Menus != null)
-        @foreach(DynamicServerMenu menu in Menus)
-    {
-       
-       <DynamicServerMenuComponent Menu="@menu" />
-    
-    }
+
+
+    @if (Menus != null)
+    @foreach (DynamicServerMenu menu in Menus)
+        @if (menu.ViewGuard)
+        {
+
+            <DynamicServerMenuComponent Menu="@menu" />
+
+        }
 

@@ -1,4 +1,5 @@
 ﻿using Bb.ComponentModel.Translations;
+using Bb.UIComponents;
 using Microsoft.AspNetCore.Components.Routing;
 using System.Globalization;
 using System.Linq;
@@ -10,13 +11,16 @@ namespace Bb.WebClient.UIComponents
     public class MenuConverter : IMenuConverter
     {
 
-        public MenuConverter(ITranslateService translateService)
+        public MenuConverter(ITranslateService translateService, GuardMenuProvider? guardProvider)
         {
+            this._guardProvider = guardProvider;
             this._translateService = translateService;
         }
 
         public object Convert(UIComponent c)
         {
+
+
 
 
             var menu = new DynamicServerMenu(c.Children.Count())
@@ -29,6 +33,8 @@ namespace Bb.WebClient.UIComponents
 
                 Type = c.Type,
                 Icon = c.Icon.Value,
+                EnabledGuard = true,
+                ViewGuard = true,
             };
 
 
@@ -36,6 +42,21 @@ namespace Bb.WebClient.UIComponents
 
             if (c is UIComponentMenu u)
             {
+
+                foreach (GuardContainer guard in u.ViewGuards)
+                    if (!_guardProvider.Get(guard))
+                    {
+                        menu.ViewGuard = false;
+                        break;
+                    }
+
+                foreach (GuardContainer guard in u.EnabledGuards)
+                    if (!_guardProvider.Get(guard))
+                    {
+                        menu.EnabledGuard = false;
+                        break;
+                    }
+
                 if (u.KeyboardArrowDown)
                     menu.KeyboardArrowDown = Glyphs.GlyphFilled.KeyboardArrowDown.Value;
 
@@ -62,6 +83,7 @@ namespace Bb.WebClient.UIComponents
 
         }
 
+        private readonly GuardMenuProvider? _guardProvider;
         private readonly ITranslateService _translateService;
 
     }

@@ -12,7 +12,6 @@ namespace MolecularSite.Shared
         public List<DynamicServerMenu>? Menus { get; set; }
 
 
-
     }
 
 

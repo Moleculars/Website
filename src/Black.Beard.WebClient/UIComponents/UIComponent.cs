@@ -1,4 +1,5 @@
 ﻿using Bb.ComponentModel.Translations;
+using Bb.UIComponents;
 using System.Diagnostics;
 
 namespace Bb.WebClient.UIComponents
@@ -18,7 +19,7 @@ namespace Bb.WebClient.UIComponents
             this.Icon = Glyph.Empty;
             this.Type = string.Empty;
             this.Parent = null;
-            
+
         }
 
 
@@ -62,6 +63,7 @@ namespace Bb.WebClient.UIComponents
         }
 
         public string Type { get; set; }
+
 
         public UIComponent Add(params UIComponent[] children)
         {

@@ -12,6 +12,9 @@ namespace MolecularSite.Shared
         public DynamicServerMenu? Menu { get; set; }
 
 
+        [Parameter]
+        public bool Enabled { get; set; }
+
     }
 
 }

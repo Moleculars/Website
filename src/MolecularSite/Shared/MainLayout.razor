@@ -10,41 +10,72 @@
 
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
 
-        @if (menus != null)
-            @foreach (var item in menus)
+        @if (menusLeft != null)
+            @foreach (var item in menusLeft)
             {
+                @if (item.ViewGuard)
+                {
 
-                // Add feature roles
-
-                <MudMenu 
-                    
-                    StartIcon="@item.Icon"
-                    EndIcon="@item.KeyboardArrowDown"
-                    
-                    
-                    FullWidth="true"
-
-                    Label="@item.Display"
-
-                    
-
-                    Color="Color.Primary"
-                    Variant="Variant.Filled"
-                    Disabled="false">
-
-                    @foreach(var subMenu in item)
+                    @if (item.IsEmpty)
                     {
-                        <MudMenuItem Disabled="false">@subMenu.Display</MudMenuItem>
+                        <MudIconButton Icon="@item.Icon" Color="Color.Inherit" Target="_blank" Disabled="@(!item.EnabledGuard)" Link="@item.Action.HRef" />
                     }
+                    else
+                    {
 
-                </MudMenu>
+                        <MudMenu StartIcon="@item.Icon"
+                            EndIcon="@item.KeyboardArrowDown"
+                            FullWidth="true"
+                            Label="@item.Display"
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            Disabled="@(!item.EnabledGuard)">
 
+                            @foreach (var subMenu in item)
+                            {
+                                <MudMenuItem Disabled="@(!subMenu.EnabledGuard)">@subMenu.Display</MudMenuItem>
+                            }
+
+                        </MudMenu>
+
+                    }
+                }
             }
-
-
         <MudSpacer />
 
-        <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Link="https://mudblazor.com/" Target="_blank" />
+        @if (menusRight != null)
+            @foreach (var item in menusRight)
+            {
+
+                @if (item.ViewGuard)
+                {
+
+                    @if (item.IsEmpty)
+                    {
+                        <MudIconButton Icon="@item.Icon" Color="Color.Inherit" Target="_blank" Disabled="@(!item.EnabledGuard)" Link="@item.Action.HRef" />
+                    }
+                    else
+                    {
+
+                        <MudMenu StartIcon="@item.Icon"
+                            EndIcon="@item.KeyboardArrowDown"
+                            FullWidth="true"
+                            Label="@item.Display"
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            Disabled="@(!item.EnabledGuard)">
+
+                            @foreach (var subMenu in item)
+                            {
+                                <MudMenuItem Disabled="@(!subMenu.EnabledGuard)">@subMenu.Display</MudMenuItem>
+                            }
+
+                        </MudMenu>
+
+                    }
+                }
+            }
+
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
 
     </MudAppBar>

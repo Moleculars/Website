@@ -1,5 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.Services;
 using Bb.WebClient.UIComponents;
 using Bb.WebClient.UIComponents.Glyphs;
 using Microsoft.AspNetCore.Components.Routing;
@@ -28,7 +29,8 @@ namespace Bb.Configurations.Menus
             var home = service.GetMenu(UIService.LeftMenu, this._guidHome);
 
             service.GetMenuOrCreate(UIService.LeftMenu, guidConfigurations, "p:MenuTop,k:ConfigurationMenu,l:en-us,d:Configuration")
-                .SetAction(NavLinkMatch.Prefix, "/configurations")
+                .SetEnabledGuard<GuardMenuIdentity>(c => c.IsIdentified())
+                .SetAction(NavLinkMatch.Prefix, typeof(Pages.ConfigurationComponentView))
                 .SetKeyboardArrowDown(false)
                 .SetIcon(GlyphOutlined.Settings)
                 ;

@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configurations\**" />
+    <Content Remove="Configurations\**" />
+    <EmbeddedResource Remove="Configurations\**" />
+    <None Remove="Configurations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Controllers\WeatherForecastController.cs" />
     <Compile Remove="ProgramService.cs" />
     <Compile Remove="Startings\LoadConfigurationInIocExtension.cs" />
@@ -16,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.25" />
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.25" />
+    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.27" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.27" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="MudBlazor" Version="6.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -26,12 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Black.Beard.Configurations\Black.Beard.Configurations.csproj" />
+    <ProjectReference Include="..\Black.Beard.MolecularSite.CustomComponents\Black.Beard.CustomComponents.csproj" />
     <ProjectReference Include="..\Black.Beard.Storages\Black.Beard.Storages.csproj" />
     <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configurations\" />
   </ItemGroup>
 
 </Project>
