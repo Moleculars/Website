@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Black.Beard.CommandLine" Version="1.0.8" />
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.27" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.28" />
     <PackageReference Include="MudBlazor" Version="6.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>

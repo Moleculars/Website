@@ -175,13 +175,16 @@ namespace Bb.CustomComponents
                     switch (attribute)
                     {
 
+                        case StringMaskAttribute stringMask:
+                            this.Mask = stringMask.Mask;
+                            break;
+
                         case DataTypeAttribute dataTypeAttribute:
                             switch (dataTypeAttribute.DataType)
                             {
                                 
                                 case DataType.DateTime:
                                     AssignStrategy(_strategies[typeof(DateTime)]);
-                                    
                                     break;
 
                                 case DataType.Date:
@@ -198,19 +201,28 @@ namespace Bb.CustomComponents
                                     break;
 
                                 case DataType.Duration:
+                                    this.Mask = StringType.Time;
                                     break;
+
                                 case DataType.PhoneNumber:
+                                    this.Mask = StringType.Telephone;
                                     break;
-                                case DataType.Currency:
-                                    break;
-                                case DataType.Html:
-                                    break;
+
                                 case DataType.MultilineText:
                                     Line = 5;
                                     break;
+
                                 case DataType.EmailAddress:
+                                    this.Mask = StringType.Email;
                                     break;
+
                                 case DataType.Url:
+                                    this.Mask = StringType.Url;
+                                    break;
+
+                                case DataType.Currency:
+                                    break;
+                                case DataType.Html:
                                     break;
                                 case DataType.ImageUrl:
                                     break;
@@ -419,6 +431,7 @@ namespace Bb.CustomComponents
 
         public bool IsValid { get; }
         public int Line { get; private set; }
+        public StringType Mask { get; private set; }
 
         private readonly List<ValidationAttribute> _constraints;
         private static Dictionary<Type, StrategyEditor> _strategies;
@@ -426,66 +439,32 @@ namespace Bb.CustomComponents
     }
 
 
-    public class StrategyEditor
+    [System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class StringMaskAttribute : Attribute
     {
-
-        public StrategyEditor(PropertyKingView propertyKingView, Type componentView, Func<object> createInstance)
+        
+        public StringMaskAttribute(StringType mask)
         {
-            this.PropertyKingView = propertyKingView;
-            this.ComponentView = componentView;
-            this.CreateInstance = createInstance;
+            this.Mask = mask;
         }
 
-        public PropertyKingView PropertyKingView { get; }
-
-        public Type ComponentView { get; }
-
-        public Func<object> CreateInstance { get; }
-
-
+        public StringType Mask { get; }
     }
 
-    public class EnumListProvider : IListProvider
+    public enum StringType
     {
-
-        public EnumListProvider()
-        {
-
-        }
-
-
-        public PropertyDescriptor Property { get; set; }
-
-
-        public ITranslateService TranslateService { get; set; }
-
-
-        public IEnumerable<ListItem> GetItems()
-        {
-
-            var values = Enum.GetValues(Property.PropertyType);
-            var fields = Property.PropertyType.GetFields();
-
-            foreach (var item in values)
-            {
-
-                var n = item.ToString();
-                var o = fields.Where(f => f.Name == n).First();
-                TranslatedKeyLabel label = o.GetFrom().FirstOrDefault() ?? n;
-
-                yield return new ListItem()
-                {
-                    Name = n,
-                    Value = item,
-                    Display = TranslateService.Translate(label),
-                };
-
-            }
-
-
-        }
-
-
+        Undefined,
+        Email,
+        Number,
+        //Search,
+        Telephone,
+        Url,
+        Color,
+        Date,
+        DateTimeLocal,
+        Month,
+        Time,
+        Week,
     }
 
 }
