@@ -37,6 +37,8 @@ namespace Bb.WebClient.UIComponents
 
         public List<string> Roles { get; set; }
 
+        public bool HasImage { get => !string.IsNullOrEmpty(this.Icon); }
+
         public string Icon { get; set; }
 
         public string? KeyboardArrowDown { get; set; }

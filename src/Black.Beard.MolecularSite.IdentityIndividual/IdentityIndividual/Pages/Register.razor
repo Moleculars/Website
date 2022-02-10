@@ -1,0 +1,46 @@
+﻿@page "/Register"
+@using MudBlazor
+@using Bb.WebClient.UIComponents
+@using Bb.CustomComponents.PropertyGridComponent
+
+<h3>Register new user</h3>
+
+
+
+<MudGrid>
+
+    <MudItem xs="12" sm="7">
+
+        <MudText>Identity</MudText>
+        <MudCard>
+            <DynamicPropertyComponent Model="@this.Model" Field="UserName" PropertyHasChanged="@OnValidate" PropertyHasInitialized="@OnInitialized" />
+            <DynamicPropertyComponent Model="@this.Model" Field="Email" PropertyHasChanged="@OnValidate" PropertyHasInitialized="@OnInitialized" />
+            <br />
+            <DynamicPropertyComponent Model="@this.Model" Field="Password" PropertyHasChanged="@OnValidate" PropertyHasInitialized="@OnInitialized" />
+        </MudCard>
+
+        <br />
+
+        <MudText>Misc</MudText>
+        <MudCard>
+            <DynamicPropertyComponent Model="@this.Model" Field="Phone" PropertyHasChanged="@OnValidate" PropertyHasInitialized="@OnInitialized" />
+        </MudCard>
+
+        <br />
+
+    </MudItem>
+
+</MudGrid>
+
+<MudButton Disabled="@(!success)" Variant="Variant.Filled" Class="ml-auto" Color="Color.Primary" OnClick="RegisterProcess">
+    @if (_processing)
+    {
+        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+        <MudText Class="ms-2">@TranslateService.Translate("p:RegisterForm,k:RegisteringButton,l:en-us,d:Registering")</MudText>
+    }
+    else
+    {
+        <MudText Class="ms-2">@TranslateService.Translate("p:RegisterForm,k:Login,l:en-us,d:Login")</MudText>
+    }
+</MudButton>
+

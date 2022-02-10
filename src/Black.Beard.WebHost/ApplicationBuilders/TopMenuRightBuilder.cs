@@ -1,8 +1,6 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
 using Bb.ComponentModel.Translations;
-using Bb.Pages;
-using Bb.Services;
 using Bb.WebClient.UIComponents;
 using Bb.WebClient.UIComponents.Glyphs;
 using System;
@@ -40,17 +38,8 @@ namespace Bb.WebHost.ApplicationBuilders
                 else
                     display = $"p:menuLanguage, k:{item.DisplayName},l:en-us, d:language {item.EnglishName}, l1:{item.IetfLanguageTag},d1:{item.NativeName}";
                 var d = (TranslatedKeyLabel)display;
-                menuLanguages.Add(new UIComponent(null, display));
+                menuLanguages.AddMenu(null, display);
             }
-
-            var guidLogin = UIService.Guids.Login;
-
-            var menuLogin = service.GetMenuOrCreate(UIService.TopRightMenu, guidLogin)
-                .SetViewGuard<GuardMenuIdentity>(c => !c.IsIdentified())
-                .SetAction(Microsoft.AspNetCore.Components.Routing.NavLinkMatch.Prefix, typeof(Login))
-                .SetIcon(GlyphFilled.SupervisedUserCircle)
-                ;
-
 
             return 0;
 

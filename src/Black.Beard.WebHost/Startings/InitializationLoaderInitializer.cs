@@ -226,13 +226,11 @@ namespace Bb.WebHost.Startings
         private static InitializationLoader LoadAssemblies(this InitializationLoader self)
         {
 
-            TypeDiscovery.Instance.EnsureAllAssembliesAreLoaded();
             TypeDiscovery.Instance.LoadAssembliesFromFolders();
 
             return self;
 
         }
-
         private static InitializationLoader ResolveInjections(this InitializationLoader self)
         {
 

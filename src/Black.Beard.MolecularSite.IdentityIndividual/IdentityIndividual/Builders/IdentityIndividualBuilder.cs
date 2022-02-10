@@ -1,8 +1,11 @@
 ﻿using Bb.ComponentModel;
 using Bb.ComponentModel.Attributes;
+using Bb.ComponentModel.DataAnnotations;
+using Bb.Identity;
 using Bb.IdentityIndividual.Services;
 using Bb.WebClient.ApplicationBuilders;
 using Bb.WebClient.Startings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,10 +35,8 @@ namespace Bb.IdentityIndividual.Builders
 
             var services = builder.Services;
 
-            //services
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            //var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            //services.Add(ServiceDescriptor.Transient(typeof(IRepository<ILogin>), typeof(RepositoryLogin)));
+            services.Add(ServiceDescriptor.Transient(typeof(IRepository<IRegisterModel>), typeof(RepositoryRegister)));
 
             var cnx = _configuration.InitialConnection.GetConnection();
             builder.Services
@@ -43,20 +44,54 @@ namespace Bb.IdentityIndividual.Builders
                 options.UseSqlServer(cnx.ConnectionString)
                 );
 
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             
-            builder.Services
+            services.AddDatabaseDeveloperPageExceptionFilter();
+            
+            services
                 .AddDefaultIdentity<IdentityUser>(options => 
-
                     options.SignIn.RequireConfirmedAccount = true
-
                 )
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-            
-            builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
-            // services.AddHttpContextAccessor();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 6;
+                options.User.RequireUniqueEmail = true;
+            });
+
+            services.Configure<PasswordHasherOptions>(option =>
+            {
+                option.IterationCount = 1200;
+            });
+
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            //    options.LoginPath = "/Home/Login";
+            //    options.AccessDeniedPath = "/Account/AccessDenied";
+            //    options.SlidingExpiration = true;
+            //});
+
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+            //builder.Services.AddAuthorization(options =>
+            //{
+            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+            //        .RequireAuthenticatedUser()
+            //        .Build();
+            //});
+
+            //services.AddIdentityServer();
+            //services.AddDeveloperSigningCredential();
+            //services.AddSigningCredential();
+
 
         }
 
@@ -70,6 +105,8 @@ namespace Bb.IdentityIndividual.Builders
 
         public void Configure(IApplicationBuilder app)
         {
+            
+            
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -8,7 +8,11 @@
 
     <MudAppBar Elevation="0">
 
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Menu" 
+            Color="Color.Inherit" 
+            Edge="Edge.Start" 
+            OnClick="@((e) => DrawerToggle())" />
 
         @if (menusLeft != null)
             @foreach (var item in menusLeft)
@@ -24,17 +28,23 @@
                     {
 
                         <MudMenu StartIcon="@item.Icon"
-                            EndIcon="@item.KeyboardArrowDown"
-                            FullWidth="true"
-                            Label="@item.Display"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            Disabled="@(!item.EnabledGuard)">
+                         EndIcon="@item.KeyboardArrowDown"
+                         FullWidth="true"
+                         Label="@item.Display"
+                         Color="Color.Primary"
+                         Variant="Variant.Filled"
+                         Disabled="@(!item.EnabledGuard)">
 
                             @foreach (var subMenu in item)
-                            {
-                                <MudMenuItem Disabled="@(!subMenu.EnabledGuard)">@subMenu.Display</MudMenuItem>
-                            }
+                                @if (subMenu.HasImage)
+                                {
+                                    <MudMenuItem Link="@subMenu.Action.HRef" Disabled="@(!subMenu.EnabledGuard)"><MudIcon Icon="@subMenu.Icon" Title="Favorite" />@subMenu.Display</MudMenuItem>
+
+                                }
+                                else
+                                {
+                                    <MudMenuItem Link="@subMenu.Action.HRef" Disabled="@(!subMenu.EnabledGuard)">@subMenu.Display</MudMenuItem>
+                                }
 
                         </MudMenu>
 
@@ -58,16 +68,24 @@
                     {
 
                         <MudMenu StartIcon="@item.Icon"
-                            EndIcon="@item.KeyboardArrowDown"
-                            FullWidth="true"
-                            Label="@item.Display"
-                            Color="Color.Primary"
-                            Variant="Variant.Filled"
-                            Disabled="@(!item.EnabledGuard)">
+                 EndIcon="@item.KeyboardArrowDown"
+                 FullWidth="true"
+                 Label="@item.Display"
+                 Color="Color.Primary"
+                 Variant="Variant.Filled"
+                 Disabled="@(!item.EnabledGuard)">
 
                             @foreach (var subMenu in item)
                             {
-                                <MudMenuItem Disabled="@(!subMenu.EnabledGuard)">@subMenu.Display</MudMenuItem>
+                                @if (subMenu.HasImage)
+                                {
+                                    <MudMenuItem Link="@subMenu.Action.HRef" Disabled="@(!subMenu.EnabledGuard)"><MudIcon Icon="@subMenu.Icon" Title="Favorite" />@subMenu.Display</MudMenuItem>
+
+                                }
+                                else
+                                {
+                                    <MudMenuItem Link="@subMenu.Action.HRef" Disabled="@(!subMenu.EnabledGuard)">@subMenu.Display</MudMenuItem>
+                                }
                             }
 
                         </MudMenu>

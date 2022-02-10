@@ -26,11 +26,6 @@ namespace Bb.WebHost.ApplicationBuilders
 
         public void Initialize(WebApplicationBuilder builder)
         {
-            var services = builder.Services;
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddMudServices();
-            services.AddHttpContextAccessor();
         }
 
 

@@ -1,25 +1,20 @@
 ﻿@page "/Login"
-@using Microsoft.AspNetCore.Identity
+@using MudBlazor
+@using Bb.WebClient.UIComponents
+@using Bb.ComponentModel.Translations
+@using Bb.CustomComponents
 
-<ul class="navbar-nav">
-@if (this.SignInManager != null && this.SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
-</ul>
+<h3>Login</h3>
+
+
+<MudPaper Class="pa-16 ma-2" Elevation="0">
+
+    @foreach (PropertyObjectDescriptor property in Descriptor.Items)
+    {
+        <DynamicComponent Type="@property.EditorType" Parameters="@property.Parameters" />
+    }
+       
+    <MudButton Variant="Variant.Filled" Color="Color.Primary">@TranslateService.Translate("p:LoginForm,k:Login,l:en-us,d:Login")</MudButton>
+
+
+</MudPaper>

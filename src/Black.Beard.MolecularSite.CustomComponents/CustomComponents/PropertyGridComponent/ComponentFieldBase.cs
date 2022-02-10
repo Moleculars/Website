@@ -18,14 +18,21 @@ namespace Bb.CustomComponents.PropertyGridComponent
             }
         }
 
-
-        public string? ErrorText { get; set; }
+        public bool Changed { get; internal set; }
 
 
         protected virtual void PropertyChange()
         {
+            this.Changed = true;
+            if (_property != null)
+            {
+                
+                if (_property.PropertyHasChanged != null)
+                    _property.PropertyHasChanged(_property);
 
-            StateHasChanged();
+                StateHasChanged();
+
+            }
 
         }
 

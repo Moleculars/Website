@@ -151,12 +151,18 @@ namespace Bb.CustomComponents
             set
             {
                 PropertyDescriptor.SetValue(Parent.Instance, value);
-                PropertyHasChanged();
+                PropertyChange();
             }
 
         }
 
-        public void PropertyHasChanged()
+        public Action<ComponentFieldBase> UIPropertyValidationHasChanged { get; set; }
+
+        public Action<PropertyObjectDescriptor> PropertyValidationHasChanged { get; set; }
+
+        public Action<PropertyObjectDescriptor> PropertyHasChanged { get; set; }
+
+        public void PropertyChange()
         {
             this.Parent.HasChanged(this);
         }
@@ -369,10 +375,22 @@ namespace Bb.CustomComponents
 
         }
 
+        public bool Validate(List<string> messages)
+        {
+            return Validate(this.Value, messages);
+        }
+
 
         public Type Type { get; internal set; }
 
+
         public IDictionary<string, object> Parameters { get; set; }
+
+
+        public string? ErrorText { get; internal set; }
+
+
+        public bool InError { get; internal set; }
 
 
         public string GetDisplay()

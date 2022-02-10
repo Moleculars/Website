@@ -15,13 +15,14 @@
 
   <ItemGroup>
     <PackageReference Include="Black.Beard.CommandLine" Version="1.0.8" />
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.28" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.29" />
     <PackageReference Include="MudBlazor" Version="6.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Black.Beard.MolecularSite.Configurations\Black.Beard.MolecularSite.Configurations.csproj" />
+    <ProjectReference Include="..\Black.Beard.MolecularSite.IdentityIndividual\Black.Beard.MolecularSite.IdentityIndividual.csproj" />
     <ProjectReference Include="..\Black.Beard.MolecularSite.Translations\Black.Beard.MolecularSite.Translations.csproj" />
     <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
     <ProjectReference Include="..\Black.Beard.WebHost\Black.Beard.WebHost.csproj" />

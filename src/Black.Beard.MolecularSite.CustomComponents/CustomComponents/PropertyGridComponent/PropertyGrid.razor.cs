@@ -36,8 +36,9 @@ namespace Bb.CustomComponents.PropertyGridComponent
                 if (value != null)
                 {
                     _selectedObject = value;
-                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService, ServiceProvider, ExcludeProperties)
+                    var d = new ObjectDescriptor(value, value?.GetType(), TranslateService, ServiceProvider, null)
                     {
+                        PropertyFilter = ExcludeProperties,
                         PropertyHasChanged = this.PropertyHasChanged,
                     };
                     this.Descriptor = d;

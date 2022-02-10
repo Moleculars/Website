@@ -65,16 +65,6 @@ namespace Bb.WebClient.UIComponents
         public string Type { get; set; }
 
 
-        public UIComponent Add(params UIComponent[] children)
-        {
-
-            foreach (var item in children)
-                this.Add(item);
-
-            return this;
-
-        }
-
         public UIComponent RemoveChild(UIComponent child)
         {
 
@@ -85,7 +75,19 @@ namespace Bb.WebClient.UIComponents
 
         }
 
-        public UIComponent Add(UIComponent child)
+        
+        public UIComponentMenu AddMenu(Guid? guid, TranslatedKeyLabel label = null)
+        {
+
+            if (guid == null)
+                guid = Guid.NewGuid();
+
+            return this.Add(new UIComponentMenu(guid, label));
+        }
+
+        
+        public T Add<T>(T child)
+            where T : UIComponent
         {
 
             if (child.Parent != null)

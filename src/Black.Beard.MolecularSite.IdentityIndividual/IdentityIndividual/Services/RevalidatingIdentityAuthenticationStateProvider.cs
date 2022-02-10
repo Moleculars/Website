@@ -6,6 +6,7 @@ using System.Security.Claims;
 
 namespace Bb.IdentityIndividual.Services
 {
+
     public class RevalidatingIdentityAuthenticationStateProvider<TUser>
       : RevalidatingServerAuthenticationStateProvider where TUser : class
     {

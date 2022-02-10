@@ -1,4 +1,5 @@
 ﻿using Bb.ComponentModel.Translations;
+using Bb.CustomComponents.PropertyGridComponent;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -8,7 +9,7 @@ namespace Bb.CustomComponents
     public class ObjectDescriptor
     {
 
-        public ObjectDescriptor(object? instance, Type type, ITranslateService translateService, IServiceProvider serviceProvider, Func<PropertyObjectDescriptor, bool> propertyFilter = null)
+        public ObjectDescriptor(object? instance, Type type, ITranslateService translateService, IServiceProvider serviceProvider, Func<PropertyDescriptor, bool> propertyFilter = null)
         {
             this.Instance = instance;
             this._type = type;
@@ -18,12 +19,18 @@ namespace Bb.CustomComponents
             this._invaLidItems = new List<PropertyObjectDescriptor>();
 
             if (propertyFilter != null)
-                this.PropertyFilter = propertyFilter;
+                this.PropertyDescriptorFilter = propertyFilter;
             else
-                this.PropertyFilter = (p) => true;
-            this.Analyze();
+                this.PropertyDescriptorFilter = (p) => true;
+
+            this.PropertyFilter = (p) => true;
+
+            if (this._type != null)
+                this.Analyze();
+
         }
 
+        public Func<PropertyDescriptor, bool> PropertyDescriptorFilter { get; set; }
         public Func<PropertyObjectDescriptor, bool> PropertyFilter { get; set; }
 
         private void Analyze()
@@ -40,16 +47,17 @@ namespace Bb.CustomComponents
 
                 var properties = TypeDescriptor.GetProperties(this._type);
                 foreach (PropertyDescriptor property in properties)
-                {
-                    var p = new PropertyObjectDescriptor(property, this);
-                    p.AnalyzeAttributes();
+                    if (PropertyDescriptorFilter(property))
+                    {
+                        var p = new PropertyObjectDescriptor(property, this);
+                        p.AnalyzeAttributes();
 
-                    if (p.IsValid)
-                        _items.Add(p);
-                    else
-                        _invaLidItems.Add(p);
+                        if (p.IsValid)
+                            _items.Add(p);
+                        else
+                            _invaLidItems.Add(p);
 
-                }
+                    }
 
             }
         }
@@ -75,6 +83,21 @@ namespace Bb.CustomComponents
                     yield return item;
 
         }
+
+        internal void ValidationHasChanged<T>(ComponentFieldBase<T> componentFieldBase)
+        {
+            
+            if (UiPropertyValidationHasChanged != null)
+                UiPropertyValidationHasChanged(componentFieldBase);
+
+            if (PropertyValidationHasChanged != null)
+                PropertyValidationHasChanged(componentFieldBase.Property);
+
+        }
+
+        public Action<ComponentFieldBase> UiPropertyValidationHasChanged { get; set; }
+
+        public Action<PropertyObjectDescriptor> PropertyValidationHasChanged { get; set; }
 
         public IEnumerable<PropertyObjectDescriptor> ItemsByCategories(TranslatedKeyLabel category)
         {

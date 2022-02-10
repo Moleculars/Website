@@ -36,15 +36,18 @@ namespace Bb.CustomComponents.PropertyGridComponent
             }
             set
             {
+                
                 if (Property != null)
-                {
-                    Property.Value = Save(value);
-                    PropertyChange();
-                }
+                    if (!object.Equals(Property.Value, value))
+                    {
+                        Property.Value = Save(value);
+                        PropertyChange();
+                    }
 
             }
 
         }
+
 
 
         public T GetStep()
@@ -89,14 +92,50 @@ namespace Bb.CustomComponents.PropertyGridComponent
         public string Validate(T o)
         {
 
-            if (Property != null)
+            if (this.Property != null)
             {
+
+                string? lastError = Property.ErrorText;
+                Property.ErrorText = null;
+
                 var messages = new List<string>();
                 if (!Property.Validate(o, messages))
-                    return String.Concat(messages.Select(c => ", " + c)).Trim(',', ' ');
+                    Property.ErrorText = String.Concat(messages.Select(c => ", " + c)).Trim(',', ' ');
+
+                var newError = !string.IsNullOrEmpty(Property.ErrorText);
+
+                if (!this.Changed || newError != Property.InError || lastError != Property.ErrorText)
+                {
+                    Property.InError = newError;
+                    ValidationHasChanged();
+                }
+
+                return Property.ErrorText;
+
             }
 
             return null;
+
+        }
+
+        private void ValidationHasChanged()
+        {
+
+            if (this.Property != null)
+            {
+
+                var p = this.Property;
+
+                if (p.UIPropertyValidationHasChanged != null)
+                    p.UIPropertyValidationHasChanged(this);
+
+                if (p.PropertyValidationHasChanged != null)
+                    p.PropertyValidationHasChanged(this.Property);
+
+                if (p.Parent != null)
+                    this.Property.Parent.ValidationHasChanged(this);
+
+            }
 
         }
 

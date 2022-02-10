@@ -105,7 +105,7 @@ namespace Bb.CustomComponents.PropertyGridComponent
             var method = this.Property.Type.GetMethod("Remove");
             method.Invoke(value, new object[] { CurrentItem });
             CurrentItem = new object();
-            Property.PropertyHasChanged();
+            Property.PropertyChange();
             PropertyChange();
             StateHasChanged();
         }

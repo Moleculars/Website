@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.28" />
-    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.28" />
+    <PackageReference Include="Black.Beard.ComponentModel" Version="1.0.29" />
+    <PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.29" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="MudBlazor" Version="6.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -37,6 +37,10 @@
     <ProjectReference Include="..\Black.Beard.MolecularSite.CustomComponents\Black.Beard.CustomComponents.csproj" />
     <ProjectReference Include="..\Black.Beard.Storages\Black.Beard.Storages.csproj" />
     <ProjectReference Include="..\Black.Beard.WebClient\Black.Beard.WebClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
 
 </Project>

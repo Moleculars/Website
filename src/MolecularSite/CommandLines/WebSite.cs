@@ -1,5 +1,6 @@
 ﻿using Bb.WebHost.Startings;
 using Microsoft.OpenApi.Models;
+using MudBlazor.Services;
 
 namespace MolecularSite.CommandLines
 {
@@ -19,7 +20,13 @@ namespace MolecularSite.CommandLines
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 
 
-            var builder = WebApplication.CreateBuilder();                     
+            var builder = WebApplication.CreateBuilder();
+            var services = builder.Services;
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
+            services.AddMudServices();
+            services.AddHttpContextAccessor();
+
             var loader = builder.LoadConfiguration(this._args);
 
             var useSwagger = loader != null

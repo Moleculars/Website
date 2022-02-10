@@ -210,7 +210,9 @@ namespace Bb.WebClient.UIComponents
             public static Guid Home { get; } = new Guid("{2E1273B0-35F1-43AD-9E24-572B73BAAB90}");
             public static Guid Languages { get; } = new Guid("{F1349EB1-BCF7-40AD-B2DF-59025F3D0493}");
 
-            public static Guid Login { get; } = new Guid("{B87BF935-BC5A-4349-B5EA-54750E88735B}");
+            public static Guid MenuUser { get; } = new Guid("{B87BF935-BC5A-4349-B5EA-54750E88735B}");
+            public static Guid Login { get; } = new Guid("{5132F0F5-CD09-4050-BFE8-473939C1B7ED}");
+            public static Guid Register { get; } = new Guid("{60DA5000-12E6-40F7-8471-6F8126BC782E}");
 
 
         }
