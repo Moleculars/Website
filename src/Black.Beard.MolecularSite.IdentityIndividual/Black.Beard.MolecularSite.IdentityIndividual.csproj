@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<PackageReference Include="Black.Beard.ComponentModel.Attributes" Version="1.0.29" />
 		<PackageReference Include="Black.Beard.Helpers.ContentLoaders" Version="1.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
 		<PackageReference Include="MudBlazor" Version="6.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />

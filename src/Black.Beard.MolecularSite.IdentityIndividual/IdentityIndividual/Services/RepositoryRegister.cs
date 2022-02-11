@@ -14,10 +14,7 @@ namespace Bb.IdentityIndividual.Services
 
         public IRegisterModel GetNew()
         {
-            return new RegisterModel()
-            {
-                 UserName = "User1"
-            };
+            return new RegisterModel();
         }
 
         public async Task<bool> SaveNew(IRegisterModel item)
